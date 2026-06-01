@@ -7,25 +7,25 @@
     @apply scroll-smooth;
   }
   body {
-    @apply bg-brand-cream text-gray-900 font-sans antialiased;
+    @apply bg-brand-surface text-brand-ink font-sans antialiased;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif font-bold;
+    @apply font-sans font-bold tracking-tight;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center px-4 py-2 bg-brand-primary text-white rounded-lg font-medium hover:bg-brand-light transition-colors;
+    @apply inline-flex items-center px-4 py-2 bg-brand-green text-white rounded-lg font-semibold text-sm hover:bg-green-700 transition-colors;
   }
   .btn-secondary {
-    @apply inline-flex items-center px-4 py-2 border border-brand-primary text-brand-primary rounded-lg font-medium hover:bg-brand-primary hover:text-white transition-colors;
+    @apply inline-flex items-center px-4 py-2 border border-brand-border text-brand-ink rounded-lg font-semibold text-sm hover:border-brand-ink transition-colors bg-white;
   }
   .card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden;
+    @apply bg-white rounded-xl border border-brand-border overflow-hidden;
   }
   .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
   }
   .badge-open {
     @apply badge bg-green-100 text-green-800;
@@ -34,9 +34,9 @@
     @apply badge bg-red-100 text-red-800;
   }
   .badge-rec {
-    @apply badge bg-blue-100 text-blue-800;
+    @apply badge bg-orange-100 text-orange-800;
   }
   .badge-med {
-    @apply badge bg-purple-100 text-purple-800;
+    @apply badge bg-violet-100 text-violet-800;
   }
 }
