@@ -1,17 +1,78 @@
 ---
+import SEOHead from "../components/layout/SEOHead.astro";
+import Header from "../components/layout/Header.astro";
+import Footer from "../components/layout/Footer.astro";
+import { dispensaries } from "../data/dispensaries";
 
+const totalCount = dispensaries.length;
+
+const towns = [...new Set(dispensaries.map((d) => d.town))].sort();
+const townCounts = towns.map((t) => ({
+  slug: t,
+  name: t.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" "),
+  count: dispensaries.filter((d) => d.town === t).length,
+}));
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Vermont Dispensary Directory",
+    url: "https://vtdispensarydirectory.com",
+    description: "Vermont's independent cannabis dispensary directory. Find all licensed dispensaries statewide.",
+  },
+];
 ---
 
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+  <head>
+    <SEOHead
+      title="Vermont Cannabis Dispensary Directory | All Licensed VT Shops"
+      description={`Find all ${totalCount} licensed cannabis dispensaries in Vermont. Browse by town, compare hours and menus, updated regularly.`}
+      schema={schema}
+    />
+    <link rel="stylesheet" href="/src/styles/global.css" />
+  </head>
+  <body>
+    <Header />
+
+    <main>
+      <section class="bg-brand-dark text-white py-20 px-4">
+        <div class="max-w-3xl mx-auto text-center">
+          <h1 class="text-4xl md:text-5xl font-serif font-bold mb-4">
+            Vermont's Cannabis Dispensary Guide
+          </h1>
+          <p class="text-brand-muted text-lg mb-8">
+            {totalCount} licensed dispensaries statewide. Independent, consumer-first, always free.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <a href="/dispensaries/" class="btn-primary text-base px-6 py-3">
+              Browse All Dispensaries
+            </a>
+            <a href="/map/" class="btn-secondary text-base px-6 py-3 border-white text-white hover:bg-white hover:text-brand-dark">
+              View Map
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <h2 class="text-2xl font-serif font-bold text-gray-900 mb-2">Browse by Town</h2>
+        <p class="text-gray-500 mb-8">{towns.length} towns with licensed dispensaries</p>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+          {townCounts.map(({ slug, name, count }) => (
+            <a
+              href={`/dispensaries/by-town/${slug}/`}
+              class="card p-4 hover:border-brand-primary hover:shadow-md transition-all group"
+            >
+              <div class="font-medium text-gray-900 group-hover:text-brand-primary">{name}</div>
+              <div class="text-sm text-gray-400 mt-1">{count} {count === 1 ? "dispensary" : "dispensaries"}</div>
+            </a>
+          ))}
+        </div>
+      </section>
+    </main>
+
+    <Footer />
+  </body>
 </html>

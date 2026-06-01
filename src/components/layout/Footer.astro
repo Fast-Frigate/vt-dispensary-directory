@@ -1,0 +1,47 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-brand-dark text-brand-muted mt-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <div>
+        <h3 class="text-white font-semibold mb-3 text-sm uppercase tracking-wide">Directory</h3>
+        <ul class="space-y-2 text-sm">
+          <li><a href="/dispensaries/" class="hover:text-white transition-colors">All Dispensaries</a></li>
+          <li><a href="/dispensaries/by-town/" class="hover:text-white transition-colors">Browse by Town</a></li>
+          <li><a href="/dispensaries/by-county/" class="hover:text-white transition-colors">Browse by County</a></li>
+          <li><a href="/map/" class="hover:text-white transition-colors">Interactive Map</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-white font-semibold mb-3 text-sm uppercase tracking-wide">Explore</h3>
+        <ul class="space-y-2 text-sm">
+          <li><a href="/strains/" class="hover:text-white transition-colors">Strains Guide</a></li>
+          <li><a href="/vermont-cannabis-guide/" class="hover:text-white transition-colors">VT Cannabis Guide</a></li>
+          <li><a href="/news/" class="hover:text-white transition-colors">News</a></li>
+          <li><a href="/compare/" class="hover:text-white transition-colors">Compare Dispensaries</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-white font-semibold mb-3 text-sm uppercase tracking-wide">Top Cities</h3>
+        <ul class="space-y-2 text-sm">
+          <li><a href="/dispensaries/by-town/burlington/" class="hover:text-white transition-colors">Burlington</a></li>
+          <li><a href="/dispensaries/by-town/brattleboro/" class="hover:text-white transition-colors">Brattleboro</a></li>
+          <li><a href="/dispensaries/by-town/rutland/" class="hover:text-white transition-colors">Rutland</a></li>
+          <li><a href="/dispensaries/by-town/montpelier/" class="hover:text-white transition-colors">Montpelier</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-white font-semibold mb-3 text-sm uppercase tracking-wide">Company</h3>
+        <ul class="space-y-2 text-sm">
+          <li><a href="/about/" class="hover:text-white transition-colors">About</a></li>
+          <li><a href="/advertise/" class="hover:text-white transition-colors">Advertise</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-gray-700 mt-10 pt-6 text-xs text-center">
+      &copy; {year} VT Dispensary Directory. Independent, consumer-first. Not affiliated with any dispensary.
+    </div>
+  </div>
+</footer>

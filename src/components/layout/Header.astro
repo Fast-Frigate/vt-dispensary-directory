@@ -1,0 +1,36 @@
+---
+const nav = [
+  { label: "Directory", href: "/dispensaries/" },
+  { label: "Map", href: "/map/" },
+  { label: "Strains", href: "/strains/" },
+  { label: "VT Guide", href: "/vermont-cannabis-guide/" },
+  { label: "News", href: "/news/" },
+];
+
+const current = Astro.url.pathname;
+---
+
+<header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <a href="/" class="flex items-center gap-2 font-serif font-bold text-xl text-brand-dark">
+        VT Dispensary Directory
+      </a>
+      <nav class="hidden md:flex items-center gap-6">
+        {nav.map(({ label, href }) => (
+          <a
+            href={href}
+            class={`text-sm font-medium transition-colors hover:text-brand-primary ${
+              current.startsWith(href) ? "text-brand-primary" : "text-gray-600"
+            }`}
+          >
+            {label}
+          </a>
+        ))}
+      </nav>
+      <a href="/dispensaries/" class="btn-primary text-sm hidden md:inline-flex">
+        Find a Dispensary
+      </a>
+    </div>
+  </div>
+</header>
