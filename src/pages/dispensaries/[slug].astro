@@ -1,0 +1,260 @@
+---
+import SEOHead from "../../components/layout/SEOHead.astro";
+import Header from "../../components/layout/Header.astro";
+import Footer from "../../components/layout/Footer.astro";
+import DispensaryCard from "../../components/directory/DispensaryCard.astro";
+import { dispensaries } from "../../data/dispensaries";
+
+export function getStaticPaths() {
+  return dispensaries.map((d) => ({ params: { slug: d.slug }, props: { dispensary: d } }));
+}
+
+const { dispensary: d } = Astro.props;
+const displayName = d.dba ?? d.name;
+const cityDisplay = d.city || d.town.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+
+const days = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"] as const;
+const dayLabels: Record<string, string> = {
+  monday: "Mon", tuesday: "Tue", wednesday: "Wed", thursday: "Thu",
+  friday: "Fri", saturday: "Sat", sunday: "Sun",
+};
+
+function fmt(t: string) {
+  const [h, m] = t.split(":").map(Number);
+  const ampm = h >= 12 ? "PM" : "AM";
+  return `${h % 12 || 12}:${m.toString().padStart(2, "0")} ${ampm}`;
+}
+
+// 3 nearby dispensaries from same town, fallback to any
+const nearby = dispensaries
+  .filter((x) => x.slug !== d.slug && x.town === d.town)
+  .slice(0, 3)
+  .concat(
+    dispensaries.filter((x) => x.slug !== d.slug && x.town !== d.town).slice(0, 3)
+  )
+  .slice(0, 3);
+
+const enabledFeatures = Object.entries(d.features)
+  .filter(([, v]) => v)
+  .map(([k]) => k.replace(/([A-Z])/g, " $1").trim());
+
+const featureLabels: Record<string, string> = {
+  delivery: "Delivery Available",
+  onlineOrdering: "Online Ordering",
+  medicalProgram: "Medical Program",
+  veteranDiscount: "Veteran Discount",
+  seniorDiscount: "Senior Discount",
+  firstTimeDiscount: "First-Time Discount",
+  loyaltyProgram: "Loyalty Program",
+  atm: "ATM On Site",
+  parking: "Parking Available",
+  accessible: "ADA Accessible",
+  cashOnly: "Cash Only",
+  debitAccepted: "Debit Accepted",
+};
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": ["Store", "LocalBusiness"],
+    name: d.name,
+    url: d.website,
+    telephone: d.phone,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: d.address,
+      addressLocality: d.city,
+      addressRegion: "VT",
+      postalCode: d.zip,
+      addressCountry: "US",
+    },
+    ...(d.lat && d.lng ? { geo: { "@type": "GeoCoordinates", latitude: d.lat, longitude: d.lng } } : {}),
+    openingHoursSpecification: days
+      .filter((day) => d.hours[day] !== null)
+      .map((day) => ({
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: day.charAt(0).toUpperCase() + day.slice(1),
+        opens: d.hours[day]?.open,
+        closes: d.hours[day]?.close,
+      })),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://vtdispensarydirectory.com/" },
+      { "@type": "ListItem", position: 2, name: "Dispensaries", item: "https://vtdispensarydirectory.com/dispensaries/" },
+      { "@type": "ListItem", position: 3, name: displayName, item: `https://vtdispensarydirectory.com/dispensaries/${d.slug}/` },
+    ],
+  },
+];
+---
+
+<html lang="en">
+  <head>
+    <SEOHead
+      title={`${displayName} | ${cityDisplay}, VT Cannabis Dispensary`}
+      description={d.description ?? `${displayName} is a ${d.licenseType} cannabis dispensary${d.address ? ` at ${d.address}` : ""} in ${cityDisplay}, VT.`}
+      schema={schema}
+    />
+  </head>
+  <body>
+    <Header />
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+      <!-- Breadcrumb -->
+      <nav class="text-sm text-gray-500 mb-6">
+        <a href="/" class="hover:text-brand-primary">Home</a> &rsaquo;
+        <a href="/dispensaries/" class="hover:text-brand-primary">Dispensaries</a> &rsaquo;
+        <a href={`/dispensaries/by-town/${d.town}/`} class="hover:text-brand-primary">{cityDisplay}</a> &rsaquo;
+        <span class="text-gray-900">{displayName}</span>
+      </nav>
+
+      <!-- Hero -->
+      <div class="card p-6 md:p-8 mb-6">
+        <div class="flex items-start justify-between gap-4 mb-4">
+          <div>
+            <h1 class="text-3xl font-serif font-bold text-gray-900 mb-1">{displayName}</h1>
+            <p class="text-gray-500">{d.address ? `${d.address}, ` : ""}{cityDisplay}, VT {d.zip}</p>
+          </div>
+          <div class="flex flex-col gap-2 items-end shrink-0">
+            <span class={`badge ${d.licenseType === "recreational" ? "badge-rec" : d.licenseType === "medical" ? "badge-med" : "badge-rec"}`}>
+              {d.licenseType === "both" ? "Rec + Med" : d.licenseType.charAt(0).toUpperCase() + d.licenseType.slice(1)}
+            </span>
+            {d.isSponsor && <span class="badge bg-brand-accent/10 text-brand-accent">Sponsored</span>}
+          </div>
+        </div>
+
+        <!-- CTAs -->
+        <div class="flex flex-wrap gap-3">
+          {d.website && (
+            <a href={`/affiliate/click/${d.slug}/?target=website&to=${encodeURIComponent(d.website)}`}
+               class="btn-primary" rel="noopener noreferrer">
+              Visit Website
+            </a>
+          )}
+          {d.menuUrl && (
+            <a href={`/affiliate/click/${d.slug}/?target=menu&to=${encodeURIComponent(d.menuUrl)}`}
+               class="btn-secondary" rel="noopener noreferrer">
+              View Menu
+            </a>
+          )}
+          {d.address && (
+            <a href={`https://maps.google.com/?q=${encodeURIComponent(d.address + " " + cityDisplay + " VT")}`}
+               class="btn-secondary" target="_blank" rel="noopener noreferrer">
+              Get Directions
+            </a>
+          )}
+          {d.phone && (
+            <a href={`tel:${d.phone}`} class="btn-secondary">{d.phone}</a>
+          )}
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <!-- Main content -->
+        <div class="md:col-span-2 space-y-6">
+
+          {d.description && (
+            <div class="card p-6">
+              <h2 class="text-xl font-serif font-bold text-gray-900 mb-3">About {displayName}</h2>
+              <p class="text-gray-700 leading-relaxed">{d.description}</p>
+              {d.editorialNote && (
+                <p class="mt-3 text-sm text-brand-primary italic">{d.editorialNote}</p>
+              )}
+            </div>
+          )}
+
+          <!-- Hours -->
+          <div class="card p-6">
+            <h2 class="text-xl font-serif font-bold text-gray-900 mb-4">Hours</h2>
+            <table class="w-full text-sm">
+              {days.map((day) => (
+                <tr class="border-b border-gray-50 last:border-0">
+                  <td class="py-2 font-medium text-gray-700 w-20">{dayLabels[day]}</td>
+                  <td class="py-2 text-gray-600 font-mono">
+                    {d.hours[day] ? `${fmt(d.hours[day]!.open)} – ${fmt(d.hours[day]!.close)}` : "Closed"}
+                  </td>
+                </tr>
+              ))}
+            </table>
+          </div>
+
+          <!-- Features -->
+          {enabledFeatures.length > 0 && (
+            <div class="card p-6">
+              <h2 class="text-xl font-serif font-bold text-gray-900 mb-4">Features & Amenities</h2>
+              <div class="flex flex-wrap gap-2">
+                {Object.entries(d.features)
+                  .filter(([, v]) => v)
+                  .map(([k]) => (
+                    <span class="badge bg-green-50 text-green-700">
+                      {featureLabels[k] ?? k}
+                    </span>
+                  ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+
+          <!-- Quick info -->
+          <div class="card p-5">
+            <h2 class="font-semibold text-gray-900 mb-3 text-sm uppercase tracking-wide">Info</h2>
+            <dl class="space-y-2 text-sm">
+              <div>
+                <dt class="text-gray-400">License</dt>
+                <dd class="font-mono text-gray-700">{d.ccbLicenseNumber}</dd>
+              </div>
+              {d.menuProvider && (
+                <div>
+                  <dt class="text-gray-400">Menu Platform</dt>
+                  <dd class="text-gray-700 capitalize">{d.menuProvider}</dd>
+                </div>
+              )}
+              {d.county && (
+                <div>
+                  <dt class="text-gray-400">County</dt>
+                  <dd class="text-gray-700">
+                    {d.county.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
+                  </dd>
+                </div>
+              )}
+              {d.lastVerified && (
+                <div>
+                  <dt class="text-gray-400">Last verified</dt>
+                  <dd class="text-gray-700">{d.lastVerified}</dd>
+                </div>
+              )}
+            </dl>
+          </div>
+
+          <!-- Tags -->
+          {d.tags && d.tags.length > 0 && (
+            <div class="card p-5">
+              <h2 class="font-semibold text-gray-900 mb-3 text-sm uppercase tracking-wide">Tags</h2>
+              <div class="flex flex-wrap gap-2">
+                {d.tags.map((tag) => (
+                  <span class="badge bg-gray-100 text-gray-600">#{tag}</span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <!-- Nearby dispensaries -->
+      {nearby.length > 0 && (
+        <div class="mt-10">
+          <h2 class="text-xl font-serif font-bold text-gray-900 mb-4">Nearby Dispensaries</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {nearby.map((n) => <DispensaryCard dispensary={n} />)}
+          </div>
+        </div>
+      )}
+    </main>
+    <Footer />
+  </body>
+</html>

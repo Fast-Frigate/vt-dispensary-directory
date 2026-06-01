@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /affiliate/click/
+
+Sitemap: https://vtdispensarydirectory.com/sitemap-index.xml

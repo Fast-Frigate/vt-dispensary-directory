@@ -1,0 +1,138 @@
+---
+import SEOHead from "../../components/layout/SEOHead.astro";
+import Header from "../../components/layout/Header.astro";
+import Footer from "../../components/layout/Footer.astro";
+import DispensaryCard from "../../components/directory/DispensaryCard.astro";
+import { dispensaries } from "../../data/dispensaries";
+
+const sorted = [...dispensaries].sort((a, b) => a.name.localeCompare(b.name));
+const towns = [...new Set(dispensaries.map((d) => d.town))].sort();
+const counties = [...new Set(dispensaries.map((d) => d.county))].sort();
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "All Vermont Cannabis Dispensaries",
+    numberOfItems: dispensaries.length,
+    itemListElement: dispensaries.map((d, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: d.name,
+      url: `https://vtdispensarydirectory.com/dispensaries/${d.slug}/`,
+    })),
+  },
+];
+---
+
+<html lang="en">
+  <head>
+    <SEOHead
+      title={`All Vermont Cannabis Dispensaries - ${new Date().getFullYear()} Directory`}
+      description={`Browse all ${dispensaries.length} licensed cannabis dispensaries in Vermont. Filter by town, county, or features.`}
+      schema={schema}
+    />
+  </head>
+  <body>
+    <Header />
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+      <div class="mb-8">
+        <h1 class="text-3xl font-serif font-bold text-gray-900 mb-2">All Vermont Cannabis Dispensaries</h1>
+        <p class="text-gray-500">{dispensaries.length} licensed dispensaries statewide</p>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-8 flex flex-wrap gap-4 items-end">
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Filter by Town</label>
+          <select id="filter-town" class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white">
+            <option value="">All Towns</option>
+            {towns.map((t) => (
+              <option value={t}>
+                {t.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Filter by County</label>
+          <select id="filter-county" class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white">
+            <option value="">All Counties</option>
+            {counties.map((c) => (
+              <option value={c}>
+                {c.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Features</label>
+          <select id="filter-feature" class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white">
+            <option value="">Any</option>
+            <option value="delivery">Delivery</option>
+            <option value="onlineOrdering">Online Ordering</option>
+            <option value="veteranDiscount">Veteran Discount</option>
+            <option value="medicalProgram">Medical Program</option>
+            <option value="accessible">Accessible</option>
+          </select>
+        </div>
+        <button id="filter-reset" class="text-sm text-brand-primary hover:underline">Reset</button>
+      </div>
+
+      <!-- Grid -->
+      <div id="dispensary-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {sorted.map((d) => (
+          <div
+            data-town={d.town}
+            data-county={d.county}
+            data-features={JSON.stringify(d.features)}
+          >
+            <DispensaryCard dispensary={d} />
+          </div>
+        ))}
+      </div>
+
+      <p id="no-results" class="hidden text-center text-gray-400 py-16">No dispensaries match your filters.</p>
+    </main>
+    <Footer />
+
+    <script>
+      const townSel = document.getElementById("filter-town") as HTMLSelectElement;
+      const countySel = document.getElementById("filter-county") as HTMLSelectElement;
+      const featureSel = document.getElementById("filter-feature") as HTMLSelectElement;
+      const resetBtn = document.getElementById("filter-reset");
+      const grid = document.getElementById("dispensary-grid");
+      const noResults = document.getElementById("no-results");
+
+      function applyFilters() {
+        const town = townSel.value;
+        const county = countySel.value;
+        const feature = featureSel.value;
+        let visible = 0;
+
+        grid?.querySelectorAll<HTMLElement>("[data-town]").forEach((el) => {
+          const features = JSON.parse(el.dataset.features || "{}");
+          const match =
+            (!town || el.dataset.town === town) &&
+            (!county || el.dataset.county === county) &&
+            (!feature || features[feature] === true);
+          el.style.display = match ? "" : "none";
+          if (match) visible++;
+        });
+
+        noResults?.classList.toggle("hidden", visible > 0);
+      }
+
+      townSel?.addEventListener("change", applyFilters);
+      countySel?.addEventListener("change", applyFilters);
+      featureSel?.addEventListener("change", applyFilters);
+      resetBtn?.addEventListener("click", () => {
+        townSel.value = "";
+        countySel.value = "";
+        featureSel.value = "";
+        applyFilters();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,76 @@
+---
+import SEOHead from "../../../components/layout/SEOHead.astro";
+import Header from "../../../components/layout/Header.astro";
+import Footer from "../../../components/layout/Footer.astro";
+import DispensaryCard from "../../../components/directory/DispensaryCard.astro";
+import { dispensaries } from "../../../data/dispensaries";
+
+export function getStaticPaths() {
+  const towns = [...new Set(dispensaries.map((d) => d.town))];
+  return towns.map((town) => ({ params: { town } }));
+}
+
+const { town } = Astro.params;
+const townName = town.split("-").map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+const townDispensaries = dispensaries.filter((d) => d.town === town);
+const year = new Date().getFullYear();
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `Cannabis Dispensaries in ${townName}, VT`,
+    numberOfItems: townDispensaries.length,
+    itemListElement: townDispensaries.map((d, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: d.name,
+      url: `https://vtdispensarydirectory.com/dispensaries/${d.slug}/`,
+    })),
+  },
+];
+---
+
+<html lang="en">
+  <head>
+    <SEOHead
+      title={`Best Cannabis Dispensaries in ${townName}, Vermont (${year})`}
+      description={`Find all ${townDispensaries.length} licensed cannabis dispensaries in ${townName}, VT. Compare hours, menus, and features. Updated ${new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}.`}
+      schema={schema}
+    />
+  </head>
+  <body>
+    <Header />
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+      <nav class="text-sm text-gray-500 mb-6">
+        <a href="/" class="hover:text-brand-primary">Home</a> &rsaquo;
+        <a href="/dispensaries/" class="hover:text-brand-primary">Dispensaries</a> &rsaquo;
+        <a href="/dispensaries/by-town/" class="hover:text-brand-primary">By Town</a> &rsaquo;
+        <span class="text-gray-900">{townName}</span>
+      </nav>
+
+      <h1 class="text-3xl font-serif font-bold text-gray-900 mb-2">
+        Cannabis Dispensaries in {townName}, VT
+      </h1>
+      <p class="text-gray-500 mb-10">
+        {townDispensaries.length} licensed {townDispensaries.length === 1 ? "dispensary" : "dispensaries"} in {townName}
+      </p>
+
+      {townDispensaries.length > 0 ? (
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {townDispensaries.map((d) => (
+            <DispensaryCard dispensary={d} />
+          ))}
+        </div>
+      ) : (
+        <p class="text-gray-400">No dispensaries listed for this town yet.</p>
+      )}
+
+      <div class="mt-12 border-t border-gray-100 pt-8">
+        <a href="/dispensaries/by-town/" class="text-brand-primary hover:underline text-sm">&larr; All Vermont towns</a>
+      </div>
+    </main>
+    <Footer />
+  </body>
+</html>

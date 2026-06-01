@@ -1,0 +1,43 @@
+---
+import SEOHead from "../../../components/layout/SEOHead.astro";
+import Header from "../../../components/layout/Header.astro";
+import Footer from "../../../components/layout/Footer.astro";
+import { dispensaries } from "../../../data/dispensaries";
+
+const towns = [...new Set(dispensaries.map((d) => d.town))].sort();
+const townData = towns.map((slug) => {
+  const name = slug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+  const count = dispensaries.filter((d) => d.town === slug).length;
+  return { slug, name, count };
+});
+---
+
+<html lang="en">
+  <head>
+    <SEOHead
+      title="Vermont Cannabis Dispensaries by Town | VT Dispensary Directory"
+      description="Browse Vermont cannabis dispensaries by town. Find licensed dispensaries near you across all Vermont communities."
+    />
+  </head>
+  <body>
+    <Header />
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <nav class="text-sm text-gray-500 mb-6">
+        <a href="/" class="hover:text-brand-primary">Home</a> &rsaquo;
+        <a href="/dispensaries/" class="hover:text-brand-primary">Dispensaries</a> &rsaquo;
+        <span class="text-gray-900">By Town</span>
+      </nav>
+      <h1 class="text-3xl font-serif font-bold text-gray-900 mb-2">Vermont Dispensaries by Town</h1>
+      <p class="text-gray-500 mb-10">{towns.length} towns with licensed dispensaries</p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        {townData.map(({ slug, name, count }) => (
+          <a href={`/dispensaries/by-town/${slug}/`} class="card p-4 hover:shadow-md hover:border-brand-primary transition-all group">
+            <div class="font-semibold text-gray-900 group-hover:text-brand-primary">{name}</div>
+            <div class="text-sm text-gray-400 mt-1">{count} {count === 1 ? "dispensary" : "dispensaries"}</div>
+          </a>
+        ))}
+      </div>
+    </main>
+    <Footer />
+  </body>
+</html>

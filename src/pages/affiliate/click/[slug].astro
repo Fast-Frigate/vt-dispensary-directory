@@ -1,0 +1,28 @@
+---
+import { dispensaries } from "../../../data/dispensaries";
+
+export function getStaticPaths() {
+  return dispensaries.map((d) => ({ params: { slug: d.slug } }));
+}
+
+const { slug } = Astro.params;
+const target = Astro.url.searchParams.get("target") ?? "website";
+const to = Astro.url.searchParams.get("to") ?? "/";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta http-equiv="refresh" content={`0;url=${to}`} />
+    <title>Redirecting...</title>
+  </head>
+  <body>
+    <p>Redirecting you now... <a href={to}>Click here if not redirected.</a></p>
+    <script define:vars={{ to, slug, target }}>
+      // Fire-and-forget click log (non-blocking)
+      fetch(`/api/click?slug=${slug}&target=${target}`, { method: "POST" }).catch(() => {});
+      window.location.replace(to);
+    </script>
+  </body>
+</html>

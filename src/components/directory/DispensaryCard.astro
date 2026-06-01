@@ -1,0 +1,56 @@
+---
+import type { Dispensary } from "../../types/dispensary";
+
+interface Props {
+  dispensary: Dispensary;
+}
+
+const { dispensary: d } = Astro.props;
+
+const displayName = d.dba ?? d.name;
+const cityDisplay = d.city || d.town.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+---
+
+<a href={`/dispensaries/${d.slug}/`} class="card p-5 hover:shadow-md hover:border-brand-primary transition-all group block">
+  <div class="flex items-start justify-between gap-3 mb-3">
+    <h3 class="font-serif font-bold text-gray-900 group-hover:text-brand-primary leading-tight">
+      {displayName}
+    </h3>
+    {d.isSponsor && (
+      <span class="badge bg-brand-accent/10 text-brand-accent shrink-0">Sponsored</span>
+    )}
+  </div>
+
+  <p class="text-sm text-gray-500 mb-3">{cityDisplay}, VT</p>
+
+  {d.address && (
+    <p class="text-sm text-gray-600 mb-3">{d.address}</p>
+  )}
+
+  <div class="flex flex-wrap gap-1.5 mb-3">
+    <span class={`badge ${d.licenseType === "recreational" ? "badge-rec" : d.licenseType === "medical" ? "badge-med" : "badge-rec"}`}>
+      {d.licenseType === "both" ? "Rec + Med" : d.licenseType.charAt(0).toUpperCase() + d.licenseType.slice(1)}
+    </span>
+    {d.features.onlineOrdering && (
+      <span class="badge bg-gray-100 text-gray-600">Online Ordering</span>
+    )}
+    {d.features.delivery && (
+      <span class="badge bg-gray-100 text-gray-600">Delivery</span>
+    )}
+    {d.features.veteranDiscount && (
+      <span class="badge bg-gray-100 text-gray-600">Veteran Discount</span>
+    )}
+  </div>
+
+  {d.tags && d.tags.length > 0 && (
+    <div class="flex flex-wrap gap-1">
+      {d.tags.slice(0, 3).map((tag) => (
+        <span class="text-xs text-gray-400">#{tag}</span>
+      ))}
+    </div>
+  )}
+
+  <div class="mt-4 text-sm font-medium text-brand-primary group-hover:underline">
+    View profile &rarr;
+  </div>
+</a>
