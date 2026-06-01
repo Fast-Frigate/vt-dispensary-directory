@@ -5,27 +5,29 @@ export default {
     extend: {
       colors: {
         brand: {
-          ink:     "#0f0f0f",   // near-black — nav, dark sections, card backgrounds
-          paper:   "#ffffff",   // white — content backgrounds
-          green:   "#16a34a",   // primary accent — cannabis green, CTAs
-          orange:  "#f97316",   // warm accent — highlights, badges
+          ink:     "#0f0f0f",   // near-black — nav, footer, headings
+          cream:   "#f0e8d8",   // warm cream — page background (from Glyphy)
+          paper:   "#ffffff",   // white — cards, input fields
+          green:   "#16a34a",   // primary CTA — cannabis green
+          orange:  "#f97316",   // warm accent — stat bar, badges
           muted:   "#6b7280",   // secondary text, metadata
-          surface: "#f5f5f5",   // light gray — page background, filter bars
-          border:  "#e5e5e5",   // subtle borders, dividers
+          border:  "#e2d8c8",   // warm border — matches cream bg
         },
         status: {
           open:    "#16a34a",
           closed:  "#ef4444",
-          unknown: "#6b7280",
+          unknown: "#9ca3af",
         },
       },
       fontFamily: {
-        // Clean, modern system stack — no Google Fonts, no display fonts
         sans: [
           "Inter", "system-ui", "-apple-system", "BlinkMacSystemFont",
           "Segoe UI", "sans-serif",
         ],
         mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+      },
+      fontWeight: {
+        black: "900",
       },
     },
   },

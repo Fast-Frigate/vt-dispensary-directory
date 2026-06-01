@@ -10,27 +10,33 @@ const nav = [
 const current = Astro.url.pathname;
 ---
 
-<header class="bg-brand-ink text-white sticky top-0 z-50">
+<header class="bg-brand-ink sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-14">
-      <a href="/" class="font-bold text-lg tracking-tight text-white hover:text-brand-orange transition-colors">
-        VT Dispensary Directory
+
+      <a href="/" class="font-black text-white text-lg tracking-tight hover:text-brand-orange transition-colors">
+        VT DISPENSARY DIRECTORY
       </a>
-      <nav class="hidden md:flex items-center gap-6">
+
+      <nav class="hidden md:flex items-center gap-1">
         {nav.map(({ label, href }) => (
           <a
             href={href}
-            class={`text-sm font-medium transition-colors hover:text-brand-orange ${
-              current.startsWith(href) ? "text-brand-orange" : "text-gray-300"
+            class={`px-3 py-1.5 rounded-full text-sm font-bold transition-colors ${
+              current.startsWith(href)
+                ? "bg-white text-brand-ink"
+                : "text-gray-400 hover:text-white"
             }`}
           >
             {label}
           </a>
         ))}
       </nav>
-      <a href="/dispensaries/" class="btn-primary text-sm hidden md:inline-flex">
+
+      <a href="/dispensaries/" class="hidden md:inline-flex items-center px-4 py-1.5 bg-brand-green text-white rounded-full text-sm font-bold hover:bg-green-700 transition-colors">
         Find a Dispensary
       </a>
+
     </div>
   </div>
 </header>

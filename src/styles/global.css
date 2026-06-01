@@ -7,36 +7,40 @@
     @apply scroll-smooth;
   }
   body {
-    @apply bg-brand-surface text-brand-ink font-sans antialiased;
+    @apply bg-brand-cream text-brand-ink font-sans antialiased;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-sans font-bold tracking-tight;
+    @apply font-sans font-black tracking-tight text-brand-ink;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center px-4 py-2 bg-brand-green text-white rounded-lg font-semibold text-sm hover:bg-green-700 transition-colors;
+    @apply inline-flex items-center px-5 py-2.5 bg-brand-green text-white rounded-full font-bold text-sm hover:bg-green-700 transition-colors;
   }
   .btn-secondary {
-    @apply inline-flex items-center px-4 py-2 border border-brand-border text-brand-ink rounded-lg font-semibold text-sm hover:border-brand-ink transition-colors bg-white;
+    @apply inline-flex items-center px-5 py-2.5 border border-brand-ink text-brand-ink rounded-full font-bold text-sm hover:bg-brand-ink hover:text-white transition-colors;
   }
+  /* Cards sit on cream — minimal border, white background */
   .card {
-    @apply bg-white rounded-xl border border-brand-border overflow-hidden;
+    @apply bg-brand-paper rounded-2xl border border-brand-border overflow-hidden;
   }
   .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold;
   }
-  .badge-open {
-    @apply badge bg-green-100 text-green-800;
+  .badge-open   { @apply badge bg-green-100 text-green-800; }
+  .badge-closed { @apply badge bg-red-100 text-red-800; }
+  .badge-rec    { @apply badge bg-orange-100 text-orange-800; }
+  .badge-med    { @apply badge bg-violet-100 text-violet-800; }
+
+  /* Breadcrumb */
+  .breadcrumb {
+    @apply text-xs uppercase tracking-widest text-brand-muted mb-6 flex items-center gap-2;
   }
-  .badge-closed {
-    @apply badge bg-red-100 text-red-800;
-  }
-  .badge-rec {
-    @apply badge bg-orange-100 text-orange-800;
-  }
-  .badge-med {
-    @apply badge bg-violet-100 text-violet-800;
+  .breadcrumb a { @apply hover:text-brand-ink transition-colors; }
+
+  /* Section label — small all-caps above headings */
+  .section-label {
+    @apply text-xs font-bold uppercase tracking-widest text-brand-muted mb-2;
   }
 }

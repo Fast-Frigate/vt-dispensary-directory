@@ -31,35 +31,30 @@ const schema = [
       description={`Find all ${totalCount} licensed cannabis dispensaries in Vermont. Browse by town, compare hours and menus, updated regularly.`}
       schema={schema}
     />
-    <link rel="stylesheet" href="/src/styles/global.css" />
   </head>
   <body>
     <Header />
 
     <main>
-      <!-- Hero -->
-      <section class="bg-brand-ink text-white py-20 px-4">
-        <div class="max-w-3xl mx-auto text-center">
-          <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-4">
-            Vermont's Cannabis<br/>Dispensary Directory
-          </h1>
-          <p class="text-gray-400 text-lg mb-8">
-            {totalCount} licensed dispensaries statewide. Independent, consumer-first, always free.
-          </p>
-          <div class="flex flex-col sm:flex-row gap-3 justify-center">
-            <a href="/dispensaries/" class="btn-primary text-base px-6 py-3">
-              Browse All Dispensaries
-            </a>
-            <a href="/map/" class="inline-flex items-center px-6 py-3 border border-white/20 text-white rounded-lg font-semibold text-base hover:border-white transition-colors">
-              View Map
-            </a>
-          </div>
+
+      <!-- Hero — black on cream, big type -->
+      <section class="px-4 pt-16 pb-12 max-w-7xl mx-auto">
+        <p class="section-label">vtdispensarydirectory.com</p>
+        <h1 class="text-5xl md:text-7xl font-black tracking-tight text-brand-ink leading-none mb-6 max-w-3xl">
+          Vermont's Cannabis Dispensary Directory
+        </h1>
+        <p class="text-brand-muted text-lg mb-8 max-w-xl">
+          {totalCount} licensed dispensaries statewide. Independent, consumer-first, always free.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a href="/dispensaries/" class="btn-primary">Browse All Dispensaries</a>
+          <a href="/map/" class="btn-secondary">View Map</a>
         </div>
       </section>
 
       <!-- Stat bar -->
-      <div class="bg-brand-orange text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap gap-6 text-sm font-semibold">
+      <div class="bg-brand-ink text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap gap-8 text-xs font-bold uppercase tracking-widest">
           <span>{totalCount} Licensed Dispensaries</span>
           <span>{towns.length} Vermont Towns</span>
           <span>Updated Regularly</span>
@@ -69,20 +64,21 @@ const schema = [
 
       <!-- Browse by Town -->
       <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h2 class="text-2xl font-bold text-brand-ink mb-2">Browse by Town</h2>
-        <p class="text-brand-muted mb-8">{towns.length} towns with licensed dispensaries</p>
+        <p class="section-label">Browse by Location</p>
+        <h2 class="text-3xl font-black text-brand-ink mb-8">Vermont Towns</h2>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
           {townCounts.map(({ slug, name, count }) => (
             <a
               href={`/dispensaries/by-town/${slug}/`}
-              class="card p-4 hover:border-brand-green hover:shadow-sm transition-all group"
+              class="group flex flex-col p-4 bg-brand-paper rounded-xl border border-brand-border hover:border-brand-ink transition-all"
             >
-              <div class="font-semibold text-brand-ink group-hover:text-brand-green text-sm">{name}</div>
-              <div class="text-xs text-brand-muted mt-1">{count} {count === 1 ? "dispensary" : "dispensaries"}</div>
+              <span class="font-bold text-brand-ink group-hover:text-brand-green text-sm leading-tight">{name}</span>
+              <span class="text-xs text-brand-muted mt-1">{count} {count === 1 ? "shop" : "shops"}</span>
             </a>
           ))}
         </div>
       </section>
+
     </main>
 
     <Footer />
