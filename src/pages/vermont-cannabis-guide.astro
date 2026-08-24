@@ -1,0 +1,219 @@
+---
+import Page from "../layouts/Page.astro";
+import { dispensaries } from "../data/dispensaries";
+import { SITE_URL } from "../config/site";
+
+const total = dispensaries.length;
+const towns = new Set(dispensaries.map((d) => d.town)).size;
+const counties = new Set(dispensaries.map((d) => d.county)).size;
+
+const faqs = [
+  {
+    q: "Is cannabis legal in Vermont?",
+    a: "Yes. Adults 21 and over can legally possess and buy cannabis from licensed retailers in Vermont. Possession was legalised in 2018 and licensed retail sales began on 1 October 2022. Cannabis remains illegal under federal law.",
+  },
+  {
+    q: "How much cannabis can I buy or carry in Vermont?",
+    a: "Adults 21 and over may possess up to one ounce of cannabis flower or five grams of hashish. Dispensaries will not sell you more than the possession limit in a single transaction.",
+  },
+  {
+    q: "Do I need to be a Vermont resident to buy cannabis?",
+    a: "No. Any adult 21 or over with valid government-issued photo ID can buy from a Vermont dispensary, regardless of what state they live in. You cannot legally take it across a state line.",
+  },
+  {
+    q: "How much is cannabis taxed in Vermont?",
+    a: "Vermont applies a 14% cannabis excise tax on top of the 6% state sales tax, so expect roughly 20% added at the register. Most menu prices are shown before tax.",
+  },
+  {
+    q: "Can I grow cannabis at home in Vermont?",
+    a: "Yes. Vermont allows adults 21 and over to grow up to two mature and four immature plants per dwelling, not per person. Landlords may prohibit it in rental agreements.",
+  },
+  {
+    q: "Why does my town not have a dispensary?",
+    a: "Vermont requires towns to affirmatively vote to permit cannabis retail. A town that has never held that vote cannot host a dispensary, regardless of state licensing. That single rule explains most of the gaps on the map.",
+  },
+  {
+    q: "Can I use cannabis in public in Vermont?",
+    a: "No. Public consumption is illegal, including in streets, parks and vehicles. Consumption is limited to private property, subject to the property owner's rules.",
+  },
+];
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+      { "@type": "ListItem", position: 2, name: "Vermont Cannabis Guide", item: `${SITE_URL}/vermont-cannabis-guide/` },
+    ],
+  },
+];
+
+const toc = [
+  ["the-law", "What the law actually says"],
+  ["buying", "Buying: what to bring and expect"],
+  ["potency", "Potency caps and reading a label"],
+  ["taxes", "Taxes and paying"],
+  ["where", "Where the dispensaries are"],
+  ["medical", "The medical program"],
+  ["home-grow", "Growing at home"],
+  ["faq", "Common questions"],
+];
+---
+
+<Page
+  title="Vermont Cannabis Guide: Laws, Buying & Dispensaries | 2026"
+  description="A plain-English guide to legal cannabis in Vermont: possession limits, potency caps, taxes, where dispensaries are allowed, home growing, and what to expect on your first visit."
+  label="Guide"
+  heading="The Vermont cannabis guide"
+  intro="Everything a Vermont buyer actually needs to know, without the legislative jargon. Last reviewed August 2026."
+  schema={schema}
+>
+  <nav class="card p-5 mb-10">
+    <p class="text-xs uppercase tracking-widest text-brand-muted mb-3">On this page</p>
+    <ol class="grid sm:grid-cols-2 gap-x-6 gap-y-1.5 text-sm">
+      {toc.map(([id, label], i) => (
+        <li>
+          <a href={`#${id}`} class="text-brand-green font-semibold hover:underline">
+            {i + 1}. {label}
+          </a>
+        </li>
+      ))}
+    </ol>
+  </nav>
+
+  <div class="prose">
+    <h2 id="the-law">What the law actually says</h2>
+    <p>
+      Vermont legalised possession of small amounts of cannabis in 2018 under Act 86, but that
+      law created no legal way to buy any. For four years the state had legal possession and no
+      legal supply, which is a strange thing to legislate for and was widely recognised as such.
+    </p>
+    <p>
+      Act 164, passed in 2020, fixed it by creating a regulated commercial market overseen by
+      the Cannabis Control Board. Licensed retail sales began on 1 October 2022.
+    </p>
+    <p>The core rules for adults 21 and over:</p>
+    <ul>
+      <li>Possess up to <strong>one ounce</strong> of flower, or five grams of hashish</li>
+      <li>Buy from any <strong>licensed retailer</strong>, with no residency requirement</li>
+      <li>Grow up to <strong>two mature and four immature plants</strong> per dwelling</li>
+      <li><strong>No public consumption</strong>, anywhere, including in a parked car</li>
+      <li><strong>No crossing state lines</strong>, which is a federal offence</li>
+    </ul>
+    <p>
+      Driving under the influence is treated like alcohol impairment and is prosecuted. There is
+      no legal threshold that makes it acceptable.
+    </p>
+
+    <h2 id="buying">Buying: what to bring and expect</h2>
+    <p>
+      Bring government-issued photo ID showing you are 21 or over. Every licensed shop checks it
+      every visit. There is no discretion on this and no amount of obviously being over 40 gets
+      you past it.
+    </p>
+    <p>
+      Beyond that, a Vermont dispensary is an unremarkable retail experience. You will usually
+      be greeted, sometimes asked to wait if the shop limits how many customers are on the floor,
+      and then helped by a budtender. Ask them questions. They deal with beginners constantly and
+      the good ones will steer you toward something milder than you think you want.
+    </p>
+    <p>
+      Roughly half the shops in this directory accept debit cards. The rest are cash-preferred or
+      cash-only, which is a consequence of federal banking restrictions rather than a local
+      quirk. Check the listing before you drive out, and expect an ATM on site if they are cash-only.
+    </p>
+
+    <h2 id="potency">Potency caps and reading a label</h2>
+    <p>
+      Vermont is unusual in writing potency limits into law. Flower cannot exceed
+      <strong>30% THC</strong>. Solid concentrates cannot exceed <strong>60%</strong>. If you have
+      shopped in Massachusetts or Maine, you will notice the top of the concentrate range is
+      simply missing here.
+    </p>
+    <p>
+      More useful than the headline THC number is the certificate of analysis, which every legal
+      product carries. It lists cannabinoid content and usually a terpene breakdown. Terpenes do
+      more to shape how something feels than the THC percentage does, which is why two products
+      testing identically can behave nothing alike.
+    </p>
+    <p>
+      If you are new, start meaningfully lower than you expect to need, and wait. Edibles in
+      particular can take two hours to arrive fully.
+    </p>
+
+    <h2 id="taxes">Taxes and paying</h2>
+    <p>
+      Vermont charges a <strong>14% cannabis excise tax</strong> on top of the ordinary
+      <strong>6% sales tax</strong>. Together that is about 20% added at the register, and most
+      dispensaries list menu prices before tax.
+    </p>
+    <p>
+      A $40 eighth becomes roughly $48. Budget accordingly, particularly if you are paying cash.
+    </p>
+
+    <h2 id="where">Where the dispensaries are</h2>
+    <p>
+      There are {total} licensed retailers in this directory, spread across {towns} towns in
+      {counties} counties. The distribution is lopsided, and the reason is Vermont's local opt-in rule.
+    </p>
+    <p>
+      A dispensary cannot open in a town that has not voted to allow cannabis retail. Not zoned
+      for it, not merely declined to ban it: voted yes. Towns that never took up the question are
+      closed by default, and a state licence does not override that.
+    </p>
+    <p>
+      The practical effect is clustering. Burlington has more than twenty shops. Whole stretches
+      of the state have none. If your town shows nothing, check the
+      <a href="/dispensaries/by-county/">county page</a> rather than assuming you have to drive far.
+    </p>
+
+    <h2 id="medical">The medical program</h2>
+    <p>
+      Vermont's medical cannabis program predates adult-use retail and still operates alongside it.
+      Registered patients get access to some products and quantities that adult-use customers do
+      not, and they are exempt from certain restrictions.
+    </p>
+    <p>
+      Registration goes through the Cannabis Control Board and requires certification from a
+      healthcare provider. If you are using cannabis to manage a diagnosed condition, it is worth
+      looking into rather than defaulting to the adult-use market.
+    </p>
+
+    <h2 id="home-grow">Growing at home</h2>
+    <p>
+      Vermont permits two mature and four immature plants <strong>per dwelling</strong>, not per
+      adult. Two adults sharing a house do not get four mature plants between them.
+    </p>
+    <p>
+      Plants must be kept out of public view and secured from anyone under 21. Renters should check
+      their lease, because landlords can and often do prohibit cultivation regardless of state law.
+    </p>
+
+    <h2 id="faq">Common questions</h2>
+    {faqs.map((f) => (
+      <>
+        <h3>{f.q}</h3>
+        <p>{f.a}</p>
+      </>
+    ))}
+  </div>
+
+  <div class="card p-6 mt-10">
+    <p class="text-sm text-brand-muted leading-relaxed">
+      <strong class="text-brand-ink">This guide is general information, not legal advice.</strong>
+      Vermont's cannabis rules change, and the version that matters is the current one. The
+      <a href="https://ccb.vermont.gov/" rel="noopener noreferrer" class="text-brand-green font-semibold hover:underline">Cannabis Control Board</a>
+      publishes the regulations and the official licensee list. Last reviewed August 2026.
+    </p>
+  </div>
+</Page>

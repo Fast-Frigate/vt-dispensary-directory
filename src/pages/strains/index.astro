@@ -1,0 +1,47 @@
+---
+import { getCollection } from "astro:content";
+import Page from "../../layouts/Page.astro";
+
+const strains = (await getCollection("strains", ({ data }) => !data.draft))
+  .sort((a, b) => a.data.name.localeCompare(b.data.name));
+
+const typeClass: Record<string, string> = {
+  indica: "badge bg-violet-100 text-violet-800",
+  sativa: "badge bg-orange-100 text-orange-800",
+  hybrid: "badge bg-green-100 text-green-800",
+};
+---
+
+<Page
+  title="Cannabis Strain Guide | VT Dispensary Directory"
+  description="Plain-English profiles of common cannabis strains: type, typical potency, terpenes, and what to expect. A reference for reading Vermont dispensary menus."
+  label="Reference"
+  heading="Strain guide"
+  intro="Profiles of strains you are likely to meet on a Vermont menu. These are general references, not a live inventory: availability changes constantly and every grower's version tests differently."
+  wide
+>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {strains.map((s) => (
+      <a href={`/strains/${s.id}/`} class="card p-5 block hover:border-brand-green transition-colors">
+        <div class="flex items-start justify-between gap-3 mb-2">
+          <h2 class="text-lg font-black text-brand-ink tracking-tight">{s.data.name}</h2>
+          <span class={typeClass[s.data.type]}>{s.data.type}</span>
+        </div>
+        <p class="text-sm text-brand-muted leading-relaxed mb-3">{s.data.description}</p>
+        {s.data.thc && (
+          <p class="text-xs font-mono text-brand-muted">THC {s.data.thc}{s.data.cbd && s.data.cbd !== "Under 1%" ? ` · CBD ${s.data.cbd}` : ""}</p>
+        )}
+      </a>
+    ))}
+  </div>
+
+  <div class="card p-6 mt-8">
+    <h2 class="text-lg font-black mb-2 tracking-tight">Read the lab report, not the name</h2>
+    <p class="text-sm text-brand-muted leading-relaxed">
+      Strain names are not standardised. Anyone can call a plant anything, and two jars
+      sharing a name can differ substantially in cannabinoid and terpene content. Every
+      product sold in a licensed Vermont dispensary carries a certificate of analysis.
+      That document tells you what you are actually buying. Ask for it.
+    </p>
+  </div>
+</Page>

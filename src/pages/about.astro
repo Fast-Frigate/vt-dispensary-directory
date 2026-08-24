@@ -1,0 +1,78 @@
+---
+import Page from "../layouts/Page.astro";
+import { dispensaries } from "../data/dispensaries";
+
+const total = dispensaries.length;
+const verified = dispensaries.filter((d) => d.lastVerified).length;
+const towns = new Set(dispensaries.map((d) => d.town)).size;
+---
+
+<Page
+  title="About | VT Dispensary Directory"
+  description="How this Vermont cannabis dispensary directory is built, where the data comes from, how often it is verified, and how we make money."
+  label="About"
+  heading="An independent directory of Vermont's licensed dispensaries"
+  intro="No paid placements, no pay-to-rank. Every licensed retailer in the state is listed whether they work with us or not."
+>
+  <div class="grid grid-cols-3 gap-4 mb-10">
+    <div class="card p-5"><p class="text-3xl font-black">{total}</p><p class="text-xs uppercase tracking-widest text-brand-muted mt-1">Licensed shops</p></div>
+    <div class="card p-5"><p class="text-3xl font-black">{towns}</p><p class="text-xs uppercase tracking-widest text-brand-muted mt-1">Towns covered</p></div>
+    <div class="card p-5"><p class="text-3xl font-black">{verified}</p><p class="text-xs uppercase tracking-widest text-brand-muted mt-1">Verified listings</p></div>
+  </div>
+
+  <div class="prose">
+    <h2>Where the listings come from</h2>
+    <p>
+      The spine of this directory is the Vermont Cannabis Control Board's licensee list.
+      Every entry carries its CCB retail licence number, which is the only identifier that
+      reliably distinguishes two businesses trading under similar names.
+    </p>
+    <p>
+      Contact details, addresses, coordinates, opening hours and amenities are then verified
+      against each dispensary's Google Business Profile. That verification pass is dated on
+      every listing, so you can see how fresh the information is rather than guessing.
+    </p>
+
+    <h2>What we will not do</h2>
+    <p>
+      We do not publish information we have not verified. Where a dispensary's hours have not
+      been confirmed, the listing says so plainly and shows nothing rather than showing a
+      plausible guess. The same applies to addresses, phone numbers and amenities.
+    </p>
+    <p>
+      This matters more than it sounds. A directory that invents opening hours sends real
+      people to closed doors, and it does it at scale. We would rather show an incomplete
+      listing than a confident wrong one.
+    </p>
+
+    <h2>How ranking works</h2>
+    <p>
+      It does not. Listings sort alphabetically or by distance, never by commercial
+      relationship. A dispensary cannot buy a higher position, and declining to work with us
+      cannot lower one. Where a listing is sponsored, it is labelled sponsored.
+    </p>
+
+    <h2>How this is funded</h2>
+    <p>
+      Outbound links to dispensary websites and menus may be affiliate links, which means we
+      may earn a commission when you click through and buy. That never changes what we list
+      or how we order it. The full explanation is on the
+      <a href="/affiliate/">affiliate disclosure</a> page.
+    </p>
+
+    <h2>Corrections</h2>
+    <p>
+      If you own or work at a listed dispensary and something here is wrong, tell us and we
+      will fix it. Corrections are free and do not require any commercial relationship. The
+      same goes for customers who notice a shop has moved, closed or changed hours.
+    </p>
+
+    <h2>What this site is not</h2>
+    <p>
+      We do not sell cannabis, take orders, or handle payments. Nothing here is medical or
+      legal advice. Cannabis is legal for adults 21 and over in Vermont and remains illegal
+      under federal law, which among other things means you cannot take it across a state
+      line.
+    </p>
+  </div>
+</Page>

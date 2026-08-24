@@ -34,9 +34,9 @@ const nearby = dispensaries
   )
   .slice(0, 3);
 
-const enabledFeatures = Object.entries(d.features)
-  .filter(([, v]) => v)
-  .map(([k]) => k.replace(/([A-Z])/g, " $1").trim());
+const enabledFeatures = d.features
+  ? Object.entries(d.features).filter(([, v]) => v).map(([k]) => k)
+  : [];
 
 const featureLabels: Record<string, string> = {
   delivery: "Delivery Available",
@@ -69,14 +69,18 @@ const schema = [
       addressCountry: "US",
     },
     ...(d.lat && d.lng ? { geo: { "@type": "GeoCoordinates", latitude: d.lat, longitude: d.lng } } : {}),
-    openingHoursSpecification: days
-      .filter((day) => d.hours[day] !== null)
-      .map((day) => ({
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: day.charAt(0).toUpperCase() + day.slice(1),
-        opens: d.hours[day]?.open,
-        closes: d.hours[day]?.close,
-      })),
+    ...(d.hours
+      ? {
+          openingHoursSpecification: days
+            .filter((day) => d.hours![day] !== null)
+            .map((day) => ({
+              "@type": "OpeningHoursSpecification",
+              dayOfWeek: day.charAt(0).toUpperCase() + day.slice(1),
+              opens: d.hours![day]!.open,
+              closes: d.hours![day]!.close,
+            })),
+        }
+      : {}),
   },
   {
     "@context": "https://schema.org",
@@ -104,9 +108,9 @@ const schema = [
 
       <!-- Breadcrumb -->
       <nav class="text-sm text-gray-500 mb-6">
-        <a href="/" class="hover:text-brand-primary">Home</a> &rsaquo;
-        <a href="/dispensaries/" class="hover:text-brand-primary">Dispensaries</a> &rsaquo;
-        <a href={`/dispensaries/by-town/${d.town}/`} class="hover:text-brand-primary">{cityDisplay}</a> &rsaquo;
+        <a href="/" class="hover:text-brand-green">Home</a> &rsaquo;
+        <a href="/dispensaries/" class="hover:text-brand-green">Dispensaries</a> &rsaquo;
+        <a href={`/dispensaries/by-town/${d.town}/`} class="hover:text-brand-green">{cityDisplay}</a> &rsaquo;
         <span class="text-gray-900">{displayName}</span>
       </nav>
 
@@ -114,7 +118,7 @@ const schema = [
       <div class="card p-6 md:p-8 mb-6">
         <div class="flex items-start justify-between gap-4 mb-4">
           <div>
-            <h1 class="text-3xl font-serif font-bold text-gray-900 mb-1">{displayName}</h1>
+            <h1 class="text-3xl font-bold text-gray-900 mb-1">{displayName}</h1>
             <p class="text-gray-500">{d.address ? `${d.address}, ` : ""}{cityDisplay}, VT {d.zip}</p>
           </div>
           <div class="flex flex-col gap-2 items-end shrink-0">
@@ -128,13 +132,13 @@ const schema = [
         <!-- CTAs -->
         <div class="flex flex-wrap gap-3">
           {d.website && (
-            <a href={`/affiliate/click/${d.slug}/?target=website&to=${encodeURIComponent(d.website)}`}
+            <a href={`/affiliate/click/${d.slug}/?target=website`}
                class="btn-primary" rel="noopener noreferrer">
               Visit Website
             </a>
           )}
           {d.menuUrl && (
-            <a href={`/affiliate/click/${d.slug}/?target=menu&to=${encodeURIComponent(d.menuUrl)}`}
+            <a href={`/affiliate/click/${d.slug}/?target=menu`}
                class="btn-secondary" rel="noopener noreferrer">
               View Menu
             </a>
@@ -157,41 +161,48 @@ const schema = [
 
           {d.description && (
             <div class="card p-6">
-              <h2 class="text-xl font-serif font-bold text-gray-900 mb-3">About {displayName}</h2>
+              <h2 class="text-xl font-bold text-gray-900 mb-3">About {displayName}</h2>
               <p class="text-gray-700 leading-relaxed">{d.description}</p>
               {d.editorialNote && (
-                <p class="mt-3 text-sm text-brand-primary italic">{d.editorialNote}</p>
+                <p class="mt-3 text-sm text-brand-green italic">{d.editorialNote}</p>
               )}
             </div>
           )}
 
           <!-- Hours -->
           <div class="card p-6">
-            <h2 class="text-xl font-serif font-bold text-gray-900 mb-4">Hours</h2>
-            <table class="w-full text-sm">
-              {days.map((day) => (
-                <tr class="border-b border-gray-50 last:border-0">
-                  <td class="py-2 font-medium text-gray-700 w-20">{dayLabels[day]}</td>
-                  <td class="py-2 text-gray-600 font-mono">
-                    {d.hours[day] ? `${fmt(d.hours[day]!.open)} – ${fmt(d.hours[day]!.close)}` : "Closed"}
-                  </td>
-                </tr>
-              ))}
-            </table>
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Hours</h2>
+            {d.hours ? (
+              <table class="w-full text-sm">
+                {days.map((day) => (
+                  <tr class="border-b border-gray-50 last:border-0">
+                    <td class="py-2 font-medium text-gray-700 w-20">{dayLabels[day]}</td>
+                    <td class="py-2 text-gray-600 font-mono">
+                      {d.hours![day] ? `${fmt(d.hours![day]!.open)} – ${fmt(d.hours![day]!.close)}` : "Closed"}
+                    </td>
+                  </tr>
+                ))}
+              </table>
+            ) : (
+              <p class="text-sm text-gray-500">
+                We haven't verified this dispensary's hours yet.
+                {d.website && (
+                  <> Check <a href={d.website} class="text-brand-green hover:underline" rel="noopener noreferrer nofollow" target="_blank">their website</a> before you go.</>
+                )}
+              </p>
+            )}
           </div>
 
           <!-- Features -->
           {enabledFeatures.length > 0 && (
             <div class="card p-6">
-              <h2 class="text-xl font-serif font-bold text-gray-900 mb-4">Features & Amenities</h2>
+              <h2 class="text-xl font-bold text-gray-900 mb-4">Features & Amenities</h2>
               <div class="flex flex-wrap gap-2">
-                {Object.entries(d.features)
-                  .filter(([, v]) => v)
-                  .map(([k]) => (
-                    <span class="badge bg-green-50 text-green-700">
-                      {featureLabels[k] ?? k}
-                    </span>
-                  ))}
+                {enabledFeatures.map((k) => (
+                  <span class="badge bg-green-50 text-green-700">
+                    {featureLabels[k] ?? k}
+                  </span>
+                ))}
               </div>
             </div>
           )}
@@ -248,7 +259,7 @@ const schema = [
       <!-- Nearby dispensaries -->
       {nearby.length > 0 && (
         <div class="mt-10">
-          <h2 class="text-xl font-serif font-bold text-gray-900 mb-4">Nearby Dispensaries</h2>
+          <h2 class="text-xl font-bold text-gray-900 mb-4">Nearby Dispensaries</h2>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {nearby.map((n) => <DispensaryCard dispensary={n} />)}
           </div>

@@ -1,0 +1,96 @@
+---
+// NOTE: written to describe accurately what this site actually does. It is not
+// legal advice and has not been reviewed by a lawyer. Have counsel check it
+// before launch, particularly if you add ad networks or any form that collects
+// personal data.
+import Page from "../layouts/Page.astro";
+import { CONTACT_EMAIL, GA4_ID, CF_BEACON_TOKEN } from "../config/site";
+
+const updated = "August 24, 2026";
+---
+
+<Page
+  title="Privacy Policy | VT Dispensary Directory"
+  description="What VT Dispensary Directory collects, what it does not, and how analytics and affiliate links work."
+  label="Legal"
+  heading="Privacy policy"
+  intro={`Last updated ${updated}.`}
+>
+  <div class="prose">
+    <h2>The short version</h2>
+    <p>
+      We do not have accounts, we do not have a newsletter, and we do not ask you for personal
+      information. We measure aggregate traffic so we know which pages are worth maintaining,
+      and we count clicks on outbound dispensary links. That is the whole of it.
+    </p>
+
+    <h2>What we store on your device</h2>
+    <p>
+      When you confirm you are 21 or over, we store a single value in your browser's local
+      storage so the notice does not reappear on every page. It contains no personal
+      information and never leaves your device. Clearing your browser data removes it.
+    </p>
+
+    <h2>Analytics</h2>
+    {CF_BEACON_TOKEN ? (
+      <p>
+        We use <strong>Cloudflare Web Analytics</strong>, which is cookieless. It does not
+        fingerprint you or track you across sites. It reports aggregate page views and
+        referrers only.
+      </p>
+    ) : null}
+    {GA4_ID ? (
+      <p>
+        We also use <strong>Google Analytics 4</strong> to understand how the directory is
+        used. It is loaded under Google Consent Mode with analytics storage denied by
+        default, which means no analytics cookies are set until you accept the notice. If you
+        never accept, GA4 receives only anonymous, cookieless pings. IP anonymisation is on.
+      </p>
+    ) : null}
+    <p>
+      We do not run advertising pixels, and we do not sell or share any data with data brokers.
+    </p>
+
+    <h2>Outbound and affiliate links</h2>
+    <p>
+      Links to dispensary websites and menus pass through a redirect on this site so the click
+      can be counted in aggregate. We record which listing and which button was used. We do
+      not attach that to any identity, because we do not have one for you.
+    </p>
+    <p>
+      Once you land on a dispensary's own site, their privacy policy applies, not ours. We
+      have no control over what they collect. See our
+      <a href="/affiliate/">affiliate disclosure</a> for how the commercial side works.
+    </p>
+
+    <h2>Server logs</h2>
+    <p>
+      This site is served as static files by Cloudflare Pages. Cloudflare processes standard
+      request data, including IP address, as part of delivering and protecting the site.
+      That is Cloudflare acting as our infrastructure provider; we do not build profiles from it.
+    </p>
+
+    <h2>Children</h2>
+    <p>
+      This site is intended for adults 21 and over. We do not knowingly collect information
+      from anyone under that age, and we have no mechanism that could.
+    </p>
+
+    <h2>Your choices</h2>
+    <ul>
+      <li>Decline the notice and analytics cookies are never set.</li>
+      <li>Clear your browser storage to reset every preference we hold.</li>
+      <li>Use any browser tracking protection you like. Nothing here depends on tracking you.</li>
+    </ul>
+
+    <h2>Changes</h2>
+    <p>
+      If this policy changes materially, the date at the top changes with it.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+      Questions go to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+    </p>
+  </div>
+</Page>

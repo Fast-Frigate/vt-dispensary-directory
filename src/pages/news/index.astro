@@ -1,0 +1,34 @@
+---
+import { getCollection } from "astro:content";
+import Page from "../../layouts/Page.astro";
+
+const posts = (await getCollection("news", ({ data }) => !data.draft))
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+---
+
+<Page
+  title="Vermont Cannabis News & Guides | VT Dispensary Directory"
+  description="Plain-English explainers on Vermont cannabis law, buying for the first time, potency rules, and how the state's dispensary map came to look the way it does."
+  label="Reading"
+  heading="News and guides"
+  intro="Explainers on how Vermont's cannabis market actually works, written for people buying rather than people licensing."
+>
+  {posts.length === 0 ? (
+    <p class="text-brand-muted">Nothing published yet.</p>
+  ) : (
+    <div class="space-y-4">
+      {posts.map((post) => (
+        <a href={`/news/${post.id}/`} class="card p-6 block hover:border-brand-green transition-colors">
+          <p class="text-xs uppercase tracking-widest text-brand-muted mb-2">
+            {fmt(post.data.publishDate)}
+          </p>
+          <h2 class="text-xl font-black text-brand-ink mb-2 tracking-tight">{post.data.title}</h2>
+          <p class="text-brand-muted text-sm leading-relaxed">{post.data.description}</p>
+        </a>
+      ))}
+    </div>
+  )}
+</Page>

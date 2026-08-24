@@ -1,0 +1,91 @@
+---
+// NOTE: plain-language terms describing how this site operates. Not legal advice
+// and not reviewed by a lawyer. Have counsel review before launch.
+import Page from "../layouts/Page.astro";
+import { CONTACT_EMAIL } from "../config/site";
+
+const updated = "August 24, 2026";
+---
+
+<Page
+  title="Terms of Use | VT Dispensary Directory"
+  description="Terms governing use of VT Dispensary Directory, including accuracy limits, age restrictions, and the site's relationship to listed dispensaries."
+  label="Legal"
+  heading="Terms of use"
+  intro={`Last updated ${updated}.`}
+>
+  <div class="prose">
+    <h2>Who this is for</h2>
+    <p>
+      This site is for adults 21 and over. Cannabis is legal for adults 21 and over in
+      Vermont. By using the site you confirm you meet that age requirement.
+    </p>
+
+    <h2>What we are</h2>
+    <p>
+      An independent directory. We are not a dispensary, not a delivery service, and not
+      affiliated with any listed business. We do not sell cannabis, take orders, process
+      payments, or hold inventory. Every transaction happens between you and a licensed
+      retailer, on their premises or their website, under their terms.
+    </p>
+
+    <h2>Accuracy, and its limits</h2>
+    <p>
+      We verify listings against the Cannabis Control Board's licensee list and each
+      dispensary's Google Business Profile, and we date every verification. We still cannot
+      guarantee accuracy. Shops move, change hours, close, and rebrand faster than any
+      directory refreshes.
+    </p>
+    <p>
+      Where we have not verified something, the listing says so rather than guessing. Call
+      ahead before you drive somewhere. If you find something wrong, tell us and we will fix it.
+    </p>
+
+    <h2>Not advice</h2>
+    <p>
+      Nothing here is medical, legal, or financial advice. Strain profiles and guides are
+      general reference. If you are managing a health condition, talk to a clinician. If you
+      need to know what the law requires of you, read the
+      <a href="https://ccb.vermont.gov/" rel="noopener noreferrer">Cannabis Control Board</a>
+      or talk to a lawyer.
+    </p>
+
+    <h2>Federal law</h2>
+    <p>
+      Cannabis remains illegal under United States federal law regardless of Vermont's rules.
+      Among other consequences, transporting cannabis across a state line is a federal offence.
+      Nothing on this site should be read as encouraging that.
+    </p>
+
+    <h2>Links to other sites</h2>
+    <p>
+      We link to dispensary websites and menus, some as affiliate links, explained in the
+      <a href="/affiliate/">affiliate disclosure</a>. We do not control those sites and are not
+      responsible for their content, their accuracy, or what they do with your data.
+    </p>
+
+    <h2>Acceptable use</h2>
+    <p>
+      Do not scrape the directory wholesale, republish it as your own, or use it to build a
+      competing dataset. Do not attempt to interfere with the site's operation. Reasonable
+      personal use, and quoting us with a link, are both fine.
+    </p>
+
+    <h2>Liability</h2>
+    <p>
+      The site is provided as-is. To the extent the law allows, we are not liable for losses
+      arising from reliance on information here, including a wasted trip to a shop that turned
+      out to be closed. Verify anything that matters before you act on it.
+    </p>
+
+    <h2>Changes</h2>
+    <p>
+      These terms may change. The date at the top reflects the current version.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+      <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+    </p>
+  </div>
+</Page>

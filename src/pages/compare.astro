@@ -1,0 +1,182 @@
+---
+import SEOHead from "../components/layout/SEOHead.astro";
+import Header from "../components/layout/Header.astro";
+import Footer from "../components/layout/Footer.astro";
+import { dispensaries } from "../data/dispensaries";
+
+const title = (s: string) =>
+  s.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+
+const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"] as const;
+
+function fmt(t: string) {
+  const [h, m] = t.split(":").map(Number);
+  const ampm = h >= 12 ? "PM" : "AM";
+  return `${h % 12 || 12}:${m.toString().padStart(2, "0")} ${ampm}`;
+}
+
+// Only entries we have actually verified are comparable — comparing blanks is noise.
+const options = dispensaries
+  .filter((d) => d.lastVerified)
+  .map((d) => ({
+    slug: d.slug,
+    name: d.dba ?? d.name,
+    town: d.city || title(d.town),
+    county: title(d.county),
+    address: d.address,
+    phone: d.phone ?? null,
+    website: d.website ?? null,
+    active: d.licenseStatus === "active",
+    rating: (d as any)._meta?.rating ?? null,
+    reviews: (d as any)._meta?.googleReviews ?? null,
+    features: d.features,
+    hours: d.hours
+      ? days.map((day) => {
+          const h = d.hours![day];
+          return h ? `${fmt(h.open)} – ${fmt(h.close)}` : "Closed";
+        })
+      : null,
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+---
+
+<html lang="en">
+  <head>
+    <SEOHead
+      title="Compare Vermont Dispensaries Side by Side | VT Dispensary Directory"
+      description="Compare Vermont cannabis dispensaries on hours, location, ratings, payment methods and amenities. Pick up to three and see them side by side."
+    />
+  </head>
+  <body>
+    <Header />
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <p class="section-label">Tools</p>
+      <h1 class="text-4xl md:text-5xl font-black tracking-tight text-brand-ink mb-3">Compare dispensaries</h1>
+      <p class="text-brand-muted max-w-2xl mb-8">
+        Pick up to three shops and see them side by side. Only verified listings appear here,
+        because comparing unverified blanks tells you nothing.
+      </p>
+
+      <div class="card p-5 mb-8" data-options={JSON.stringify(options)}>
+        <div class="grid sm:grid-cols-3 gap-4">
+          {[0, 1, 2].map((i) => (
+            <div>
+              <label for={`pick-${i}`} class="block text-xs uppercase tracking-widest text-brand-muted mb-1">
+                Dispensary {i + 1}
+              </label>
+              <select id={`pick-${i}`} class="compare-pick w-full text-sm border border-brand-border rounded-lg px-3 py-2 bg-white">
+                <option value="">Choose…</option>
+                {options.map((o) => (
+                  <option value={o.slug}>{o.name} — {o.town}</option>
+                ))}
+              </select>
+            </div>
+          ))}
+        </div>
+        <button id="compare-reset" class="text-sm text-brand-green font-semibold hover:underline mt-4">Clear all</button>
+      </div>
+
+      <div id="compare-empty" class="card p-12 text-center">
+        <p class="text-brand-muted">Choose at least two dispensaries to compare.</p>
+      </div>
+
+      <div id="compare-out" class="hidden overflow-x-auto">
+        <table class="w-full text-sm border-collapse min-w-[640px]">
+          <tbody id="compare-body"></tbody>
+        </table>
+      </div>
+    </main>
+    <Footer />
+
+    <script>
+      type Opt = {
+        slug: string; name: string; town: string; county: string;
+        address: string | null; phone: string | null; website: string | null;
+        active: boolean; rating: number | null; reviews: number | null;
+        features: Record<string, boolean> | null; hours: string[] | null;
+      };
+
+      const host = document.querySelector<HTMLElement>("[data-options]");
+      if (host) {
+        const options: Opt[] = JSON.parse(host.dataset.options || "[]");
+        const byslug = new Map(options.map((o) => [o.slug, o]));
+        const picks = Array.from(document.querySelectorAll<HTMLSelectElement>(".compare-pick"));
+        const out = document.getElementById("compare-out")!;
+        const empty = document.getElementById("compare-empty")!;
+        const body = document.getElementById("compare-body")!;
+
+        const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+        const FEATURES: [string, string][] = [
+          ["onlineOrdering", "Online ordering"],
+          ["delivery", "Delivery"],
+          ["accessible", "ADA accessible"],
+          ["parking", "Parking"],
+          ["debitAccepted", "Debit accepted"],
+          ["cashOnly", "Cash only"],
+        ];
+
+        const esc = (s: string) =>
+          s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]!));
+
+        function row(label: string, cells: string[], head = false) {
+          const tag = head ? "th" : "td";
+          const cls = head
+            ? 'class="text-left font-black text-base py-3 border-b-2 border-brand-ink align-bottom"'
+            : 'class="py-2.5 border-b border-brand-border/60 align-top"';
+          return (
+            `<tr><${tag} ${head ? 'class="text-left py-3 border-b-2 border-brand-ink text-xs uppercase tracking-widest text-brand-muted align-bottom"' : 'class="py-2.5 border-b border-brand-border/60 text-brand-muted w-40"'}>${esc(label)}</${tag}>` +
+            cells.map((c) => `<${tag} ${cls}>${c}</${tag}>`).join("") +
+            `</tr>`
+          );
+        }
+
+        function render() {
+          const chosen = picks.map((p) => p.value).filter(Boolean).map((s) => byslug.get(s)!).filter(Boolean);
+
+          if (chosen.length < 2) {
+            out.classList.add("hidden");
+            empty.classList.remove("hidden");
+            return;
+          }
+          empty.classList.add("hidden");
+          out.classList.remove("hidden");
+
+          const rows: string[] = [];
+          rows.push(row("", chosen.map((c) => `<a href="/dispensaries/${c.slug}/" class="text-brand-green hover:underline">${esc(c.name)}</a>`), true));
+          rows.push(row("Town", chosen.map((c) => esc(c.town))));
+          rows.push(row("County", chosen.map((c) => esc(c.county))));
+          rows.push(row("Address", chosen.map((c) => (c.address ? esc(c.address) : "<span class='text-brand-muted'>Not verified</span>"))));
+          rows.push(row("Phone", chosen.map((c) => (c.phone ? `<a href="tel:${esc(c.phone)}" class="text-brand-green hover:underline">${esc(c.phone)}</a>` : "—"))));
+          rows.push(row("Google rating", chosen.map((c) => (c.rating ? `${c.rating} <span class="text-brand-muted">(${c.reviews})</span>` : "—"))));
+          rows.push(row("Status", chosen.map((c) => (c.active ? '<span class="badge badge-open">Active</span>' : '<span class="badge badge-closed">Temporarily closed</span>'))));
+
+          DAYS.forEach((d, i) => {
+            rows.push(row(d, chosen.map((c) => (c.hours ? esc(c.hours[i]) : "<span class='text-brand-muted'>Not verified</span>"))));
+          });
+
+          FEATURES.forEach(([key, label]) => {
+            rows.push(row(label, chosen.map((c) =>
+              !c.features ? "<span class='text-brand-muted'>—</span>"
+              : c.features[key] ? '<span class="text-brand-green font-bold">Yes</span>'
+              : '<span class="text-brand-muted">No</span>'
+            )));
+          });
+
+          rows.push(row("", chosen.map((c) =>
+            c.website ? `<a href="/affiliate/click/${c.slug}/?target=website" class="btn-primary text-xs">Visit site</a>` : "—"
+          )));
+
+          body.innerHTML = rows.join("");
+        }
+
+        picks.forEach((p) => p.addEventListener("change", render));
+        document.getElementById("compare-reset")?.addEventListener("click", () => {
+          picks.forEach((p) => { p.value = ""; });
+          render();
+        });
+        render();
+      }
+    </script>
+  </body>
+</html>

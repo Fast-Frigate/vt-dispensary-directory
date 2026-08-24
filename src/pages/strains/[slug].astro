@@ -1,0 +1,60 @@
+---
+import { getCollection, render } from "astro:content";
+import Page from "../../layouts/Page.astro";
+
+export async function getStaticPaths() {
+  const strains = await getCollection("strains", ({ data }) => !data.draft);
+  return strains.map((s) => ({ params: { slug: s.id }, props: { strain: s } }));
+}
+
+const { strain } = Astro.props;
+const { Content } = await render(strain);
+const d = strain.data;
+
+const typeClass: Record<string, string> = {
+  indica: "badge bg-violet-100 text-violet-800",
+  sativa: "badge bg-orange-100 text-orange-800",
+  hybrid: "badge bg-green-100 text-green-800",
+};
+
+const facts: [string, string | undefined][] = [
+  ["Type", d.type],
+  ["Lineage", d.lineage],
+  ["THC", d.thc],
+  ["CBD", d.cbd],
+  ["Terpenes", d.terpenes.join(", ") || undefined],
+  ["Effects", d.effects.join(", ") || undefined],
+  ["Flavors", d.flavors.join(", ") || undefined],
+];
+---
+
+<Page title={`${d.name} Strain Profile | VT Dispensary Directory`} description={d.description}>
+  <nav class="breadcrumb">
+    <a href="/">Home</a> &rsaquo; <a href="/strains/">Strains</a>
+  </nav>
+
+  <div class="flex items-center gap-3 mb-4">
+    <h1 class="text-4xl md:text-5xl font-black tracking-tight leading-tight">{d.name}</h1>
+    <span class={typeClass[d.type]}>{d.type}</span>
+  </div>
+  <p class="text-lg text-brand-muted mb-8">{d.description}</p>
+
+  <div class="card p-6 mb-8">
+    <dl class="grid sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
+      {facts.filter(([, v]) => v).map(([k, v]) => (
+        <div>
+          <dt class="text-brand-muted text-xs uppercase tracking-widest mb-0.5">{k}</dt>
+          <dd class="text-brand-ink capitalize">{v}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+
+  <div class="prose"><Content /></div>
+
+  <p class="text-xs text-brand-muted mt-10 border-t border-brand-border pt-4">
+    General reference only. Not medical advice, and not a statement that any Vermont
+    dispensary currently stocks this strain. Potency ranges are typical figures across
+    the market, not a guarantee for any particular product.
+  </p>
+</Page>

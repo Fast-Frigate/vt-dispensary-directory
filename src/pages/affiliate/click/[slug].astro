@@ -2,27 +2,53 @@
 import { dispensaries } from "../../../data/dispensaries";
 
 export function getStaticPaths() {
-  return dispensaries.map((d) => ({ params: { slug: d.slug } }));
+  return dispensaries.map((d) => ({ params: { slug: d.slug }, props: { dispensary: d } }));
 }
 
 const { slug } = Astro.params;
-const target = Astro.url.searchParams.get("target") ?? "website";
-const to = Astro.url.searchParams.get("to") ?? "/";
+const { dispensary: d } = Astro.props;
+
+// The destinations are baked in at build time, keyed by target. Reading them
+// from a `to` query parameter (as this page used to) does not work on a static
+// build — Astro.url is evaluated during the build, so every page shipped the
+// same default — and it would also turn this route into an open redirect.
+const targets: Record<string, string> = {};
+if (d.website) targets.website = d.website;
+if (d.menuUrl) targets.menu = d.menuUrl;
+
+const fallback = d.website ?? d.menuUrl ?? "/dispensaries/";
+const displayName = d.dba ?? d.name;
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
-    <meta http-equiv="refresh" content={`0;url=${to}`} />
-    <title>Redirecting...</title>
+    <title>Redirecting to {displayName}</title>
   </head>
-  <body>
-    <p>Redirecting you now... <a href={to}>Click here if not redirected.</a></p>
-    <script define:vars={{ to, slug, target }}>
-      // Fire-and-forget click log (non-blocking)
-      fetch(`/api/click?slug=${slug}&target=${target}`, { method: "POST" }).catch(() => {});
-      window.location.replace(to);
+  <body class="p-8">
+    <p>
+      Taking you to {displayName}.
+      <a id="fallback-link" href={fallback} rel="noopener noreferrer nofollow">Continue if you are not redirected.</a>
+    </p>
+    <script is:inline define:vars={{ targets, fallback, slug }}>
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        var target = params.get("target") || "website";
+        var url = targets[target] || fallback;
+
+        var link = document.getElementById("fallback-link");
+        if (link) link.setAttribute("href", url);
+
+        if (typeof window.vtddTrackOutbound === "function") {
+          window.vtddTrackOutbound(slug, target, url);
+        }
+        window.location.replace(url);
+      })();
     </script>
+    <noscript>
+      <p><a href={fallback} rel="noopener noreferrer nofollow">Continue to {displayName}</a></p>
+    </noscript>
   </body>
 </html>

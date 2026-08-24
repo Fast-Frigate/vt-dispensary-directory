@@ -1,0 +1,43 @@
+---
+import { getCollection, render } from "astro:content";
+import Page from "../../layouts/Page.astro";
+import { SITE_URL } from "../../config/site";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("news", ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.data.title,
+    description: post.data.description,
+    datePublished: post.data.publishDate.toISOString(),
+    ...(post.data.updatedDate ? { dateModified: post.data.updatedDate.toISOString() } : {}),
+    author: { "@type": "Organization", name: post.data.author },
+    publisher: { "@type": "Organization", name: "VT Dispensary Directory" },
+    mainEntityOfPage: `${SITE_URL}/news/${post.id}/`,
+  },
+];
+---
+
+<Page title={`${post.data.title} | VT Dispensary Directory`} description={post.data.description} schema={schema}>
+  <nav class="breadcrumb">
+    <a href="/">Home</a> &rsaquo; <a href="/news/">News</a>
+  </nav>
+  <article>
+    <p class="text-xs uppercase tracking-widest text-brand-muted mb-3">
+      {fmt(post.data.publishDate)}
+    </p>
+    <h1 class="text-4xl md:text-5xl font-black tracking-tight leading-tight mb-8">{post.data.title}</h1>
+    <div class="prose"><Content /></div>
+  </article>
+</Page>

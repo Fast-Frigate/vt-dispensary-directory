@@ -1,0 +1,56 @@
+---
+import { GA4_ID, CF_BEACON_TOKEN } from "../../config/site";
+---
+
+{/* Cloudflare Web Analytics — cookieless, so it needs no consent. */}
+{CF_BEACON_TOKEN && (
+  <script
+    defer
+    src="https://static.cloudflareinsights.com/beacon.min.js"
+    data-cf-beacon={`{"token": "${CF_BEACON_TOKEN}"}`}
+  />
+)}
+
+{/* GA4 under Consent Mode v2. Denied until the visitor accepts, so no
+    analytics cookies are written on a first visit. */}
+{GA4_ID && (
+  <>
+    <script is:inline define:vars={{ GA4_ID }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { window.dataLayer.push(arguments); }
+      window.gtag = gtag;
+
+      gtag("consent", "default", {
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied",
+        analytics_storage: "denied",
+      });
+
+      if (localStorage.getItem("vtdd-consent") === "granted") {
+        gtag("consent", "update", { analytics_storage: "granted" });
+      }
+
+      gtag("js", new Date());
+      gtag("config", GA4_ID, { anonymize_ip: true });
+    </script>
+    <script is:inline defer src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`} />
+  </>
+)}
+
+{/* Outbound click tracking. Sends one event per affiliate click to whichever
+    analytics is present. Replaces the old /api/click fetch, which 404'd because
+    this is a static site with no API routes. */}
+<script is:inline>
+  window.vtddTrackOutbound = function (slug, target, url) {
+    try {
+      if (typeof window.gtag === "function") {
+        window.gtag("event", "affiliate_click", {
+          dispensary: slug,
+          link_target: target,
+          link_url: url,
+        });
+      }
+    } catch (e) { /* analytics must never block the redirect */ }
+  };
+</script>
