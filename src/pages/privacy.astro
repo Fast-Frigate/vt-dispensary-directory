@@ -4,7 +4,7 @@
 // before launch, particularly if you add ad networks or any form that collects
 // personal data.
 import Page from "../layouts/Page.astro";
-import { CONTACT_EMAIL, GA4_ID, CF_BEACON_TOKEN } from "../config/site";
+import { CONTACT_EMAIL, GA4_ID } from "../config/site";
 
 const updated = "August 24, 2026";
 ---
@@ -32,13 +32,13 @@ const updated = "August 24, 2026";
     </p>
 
     <h2>Analytics</h2>
-    {CF_BEACON_TOKEN ? (
-      <p>
-        We use <strong>Cloudflare Web Analytics</strong>, which is cookieless. It does not
-        fingerprint you or track you across sites. It reports aggregate page views and
-        referrers only.
-      </p>
-    ) : null}
+    <p>
+      We use <strong>Cloudflare Web Analytics</strong>, which is cookieless. It does not
+      fingerprint you or track you across sites, and it sets nothing on your device. It
+      reports aggregate page views, referrers and page performance only. It is enabled at
+      our hosting layer rather than by a script we ship, so it runs whether or not you
+      accept the notice below.
+    </p>
     {GA4_ID ? (
       <p>
         We also use <strong>Google Analytics 4</strong> to understand how the directory is

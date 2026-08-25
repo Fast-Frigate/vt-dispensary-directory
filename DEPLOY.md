@@ -51,7 +51,7 @@ them, so you can launch first and add them after.
 
 | Variable | Where it comes from |
 |---|---|
-| `PUBLIC_CF_BEACON_TOKEN` | Cloudflare dashboard > Web Analytics > add the site, copy the token |
+| `PUBLIC_CF_BEACON_TOKEN` | Not needed. Web Analytics is enabled for this domain with Cloudflare's automatic injection, so the beacon is added at the edge. Only set this if you ever switch to manual snippet installation. |
 | `PUBLIC_GA4_ID` | GA4 property > Data Streams > Measurement ID, format `G-XXXXXXXXXX` |
 | `PUBLIC_GSC_VERIFICATION` | Search Console > add property > HTML tag method, copy the `content` value |
 
