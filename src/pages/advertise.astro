@@ -1,0 +1,94 @@
+---
+import Page from "../layouts/Page.astro";
+import { dispensaries } from "../data/dispensaries";
+import { CONTACT_EMAIL } from "../config/site";
+
+const total = dispensaries.length;
+const towns = new Set(dispensaries.map((d) => d.town)).size;
+
+const tiers = [
+  {
+    name: "Verified listing",
+    price: "Free",
+    for: "Every licensed Vermont dispensary",
+    points: [
+      "Full listing with hours, address, phone and amenities",
+      "Direct links to your website and menu",
+      "Corrections handled at no charge",
+      "Included whether or not you ever pay us anything",
+    ],
+  },
+  {
+    name: "Enhanced profile",
+    price: "Talk to us",
+    for: "Shops that want the listing to work harder",
+    points: [
+      "Longer written profile and editorial note",
+      "Photography and brand imagery",
+      "Priority placement within your own town page",
+      "Labelled as sponsored, because it is",
+    ],
+  },
+  {
+    name: "Regional sponsorship",
+    price: "Talk to us",
+    for: "Multi-location operators and brands",
+    points: [
+      "Placement across a county or the statewide directory",
+      "Category sponsorship on guides and strain pages",
+      "Campaign reporting on clicks and outbound traffic",
+      "Never affects organic listing order",
+    ],
+  },
+];
+---
+
+<Page
+  title="Advertise | VT Dispensary Directory"
+  description="Sponsorship options for Vermont cannabis dispensaries. Verified listings are free for every licensed retailer; paid placements are always labelled."
+  label="Advertise"
+  heading="Reach people who are already looking"
+  intro="Everyone who lands here is searching for somewhere to buy cannabis in Vermont. That is a narrow audience, and a useful one."
+  wide
+>
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12 max-w-3xl">
+    <div class="card p-5"><p class="text-3xl font-black">{total}</p><p class="text-xs uppercase tracking-widest text-brand-muted mt-1">Shops listed</p></div>
+    <div class="card p-5"><p class="text-3xl font-black">{towns}</p><p class="text-xs uppercase tracking-widest text-brand-muted mt-1">Towns</p></div>
+    <div class="card p-5"><p class="text-3xl font-black">100%</p><p class="text-xs uppercase tracking-widest text-brand-muted mt-1">Statewide coverage</p></div>
+    <div class="card p-5"><p class="text-3xl font-black">0</p><p class="text-xs uppercase tracking-widest text-brand-muted mt-1">Paid ranking slots</p></div>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-6 mb-12">
+    {tiers.map((t) => (
+      <div class="card p-6 flex flex-col">
+        <h2 class="text-xl font-black tracking-tight mb-1">{t.name}</h2>
+        <p class="text-2xl font-black text-brand-green mb-1">{t.price}</p>
+        <p class="text-xs uppercase tracking-widest text-brand-muted mb-4">{t.for}</p>
+        <ul class="space-y-2 text-sm text-brand-ink/90 flex-1">
+          {t.points.map((p) => (
+            <li class="flex gap-2"><span class="text-brand-green font-bold shrink-0">&mdash;</span><span>{p}</span></li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+
+  <div class="max-w-2xl prose">
+    <h2>The rule we do not bend</h2>
+    <p>
+      Paid placement never changes organic listing order, and it never removes a competitor.
+      Sponsored slots are labelled sponsored. A directory that quietly sells its rankings
+      stops being worth reading, and then stops being worth advertising on.
+    </p>
+
+    <h2>Getting in touch</h2>
+    <p>
+      Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> with your dispensary name
+      and licence number and we will send current rates and availability.
+    </p>
+    <p>
+      If you are only writing to correct something on your existing listing, that is free and
+      always will be. Just say what is wrong.
+    </p>
+  </div>
+</Page>

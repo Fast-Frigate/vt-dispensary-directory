@@ -1,0 +1,46 @@
+---
+import Page from "../../../layouts/Page.astro";
+import { dispensaries } from "../../../data/dispensaries";
+
+const title = (s: string) =>
+  s.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+
+const counties = [...new Set(dispensaries.map((d) => d.county))]
+  .sort()
+  .map((slug) => ({
+    slug,
+    name: title(slug),
+    count: dispensaries.filter((d) => d.county === slug).length,
+    towns: [...new Set(dispensaries.filter((d) => d.county === slug).map((d) => d.town))]
+      .sort()
+      .map(title),
+  }));
+---
+
+<Page
+  title="Vermont Cannabis Dispensaries by County | VT Dispensary Directory"
+  description={`Browse licensed Vermont cannabis dispensaries across all ${counties.length} counties. See which towns in each county have a dispensary.`}
+  label="Browse by location"
+  heading="Dispensaries by county"
+  intro="Vermont's local opt-in rule means dispensaries cluster in the towns that voted for them. Browsing by county is often more useful than browsing by town."
+  wide
+>
+  <nav class="breadcrumb">
+    <a href="/">Home</a> &rsaquo; <a href="/dispensaries/">Dispensaries</a> &rsaquo;
+    <span class="text-brand-ink">By County</span>
+  </nav>
+
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {counties.map(({ slug, name, count, towns }) => (
+      <a href={`/dispensaries/by-county/${slug}/`} class="card p-5 block hover:border-brand-green transition-colors">
+        <div class="flex items-baseline justify-between gap-3 mb-2">
+          <h2 class="text-lg font-black text-brand-ink tracking-tight">{name}</h2>
+          <span class="text-sm font-bold text-brand-green shrink-0">{count}</span>
+        </div>
+        <p class="text-xs text-brand-muted leading-relaxed">
+          {towns.slice(0, 5).join(", ")}{towns.length > 5 ? ` +${towns.length - 5} more` : ""}
+        </p>
+      </a>
+    ))}
+  </div>
+</Page>

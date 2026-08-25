@@ -23,16 +23,16 @@ const townData = towns.map((slug) => {
     <Header />
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <nav class="text-sm text-gray-500 mb-6">
-        <a href="/" class="hover:text-brand-primary">Home</a> &rsaquo;
-        <a href="/dispensaries/" class="hover:text-brand-primary">Dispensaries</a> &rsaquo;
+        <a href="/" class="hover:text-brand-green">Home</a> &rsaquo;
+        <a href="/dispensaries/" class="hover:text-brand-green">Dispensaries</a> &rsaquo;
         <span class="text-gray-900">By Town</span>
       </nav>
-      <h1 class="text-3xl font-serif font-bold text-gray-900 mb-2">Vermont Dispensaries by Town</h1>
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Vermont Dispensaries by Town</h1>
       <p class="text-gray-500 mb-10">{towns.length} towns with licensed dispensaries</p>
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {townData.map(({ slug, name, count }) => (
-          <a href={`/dispensaries/by-town/${slug}/`} class="card p-4 hover:shadow-md hover:border-brand-primary transition-all group">
-            <div class="font-semibold text-gray-900 group-hover:text-brand-primary">{name}</div>
+          <a href={`/dispensaries/by-town/${slug}/`} class="card p-4 hover:shadow-md hover:border-brand-green transition-all group">
+            <div class="font-semibold text-gray-900 group-hover:text-brand-green">{name}</div>
             <div class="text-sm text-gray-400 mt-1">{count} {count === 1 ? "dispensary" : "dispensaries"}</div>
           </a>
         ))}

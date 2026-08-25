@@ -1,4 +1,5 @@
 ---
+import AgeGate from "./AgeGate.astro";
 const year = new Date().getFullYear();
 ---
 
@@ -37,12 +38,17 @@ const year = new Date().getFullYear();
         <ul class="space-y-2 text-sm">
           <li><a href="/about/" class="hover:text-white transition-colors">About</a></li>
           <li><a href="/advertise/" class="hover:text-white transition-colors">Advertise</a></li>
+          <li><a href="/affiliate/" class="hover:text-white transition-colors">Affiliate Disclosure</a></li>
+          <li><a href="/privacy/" class="hover:text-white transition-colors">Privacy</a></li>
+          <li><a href="/terms/" class="hover:text-white transition-colors">Terms</a></li>
         </ul>
       </div>
     </div>
     <div class="border-t border-white/10 mt-10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs">
       <span>&copy; {year} VT Dispensary Directory. Independent and consumer-first.</span>
-      <span>Not affiliated with any dispensary.</span>
+      <span>21+ only. Not affiliated with any dispensary.</span>
     </div>
   </div>
 </footer>
+
+<AgeGate />

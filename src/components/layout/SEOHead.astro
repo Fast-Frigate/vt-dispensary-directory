@@ -1,5 +1,7 @@
 ---
 import "../../styles/global.css";
+import Analytics from "./Analytics.astro";
+import { SITE_URL, GSC_VERIFICATION } from "../../config/site";
 
 interface Props {
   title: string;
@@ -19,8 +21,8 @@ const {
   noindex = false,
 } = Astro.props;
 
-const canonicalUrl = canonical ?? Astro.url.href;
-const siteUrl = "https://vtdispensarydirectory.com";
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, SITE_URL).href;
+const siteUrl = SITE_URL;
 ---
 
 <meta charset="utf-8" />
@@ -43,6 +45,10 @@ const siteUrl = "https://vtdispensarydirectory.com";
 
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
+{GSC_VERIFICATION && <meta name="google-site-verification" content={GSC_VERIFICATION} />}
+
 {schema.map((s) => (
   <script type="application/ld+json" set:html={JSON.stringify(s)} />
 ))}
+
+<Analytics />

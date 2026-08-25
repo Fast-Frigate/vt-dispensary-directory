@@ -1,0 +1,15 @@
+/* Shared long-form styling for the editorial pages. Kept as plain CSS rather
+   than the Tailwind typography plugin to avoid adding a dependency. */
+.prose { @apply text-brand-ink; }
+.prose h2 { @apply text-2xl font-black mt-10 mb-3 tracking-tight; }
+.prose h3 { @apply text-lg font-black mt-7 mb-2 tracking-tight; }
+.prose p { @apply mb-4 leading-relaxed text-brand-ink/90; }
+.prose ul { @apply mb-4 space-y-2 pl-5 list-disc marker:text-brand-muted; }
+.prose ol { @apply mb-4 space-y-2 pl-5 list-decimal marker:text-brand-muted; }
+.prose li { @apply leading-relaxed text-brand-ink/90; }
+.prose a { @apply text-brand-green font-semibold hover:underline; }
+.prose strong { @apply font-bold text-brand-ink; }
+.prose table { @apply w-full text-sm mb-6 border-collapse; }
+.prose th { @apply text-left font-bold py-2 border-b border-brand-border; }
+.prose td { @apply py-2 border-b border-brand-border/60 align-top; }
+.prose blockquote { @apply border-l-2 border-brand-green pl-4 italic text-brand-muted my-6; }

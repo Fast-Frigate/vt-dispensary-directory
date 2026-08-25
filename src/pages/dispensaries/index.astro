@@ -38,7 +38,7 @@ const schema = [
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
       <div class="mb-8">
-        <h1 class="text-3xl font-serif font-bold text-gray-900 mb-2">All Vermont Cannabis Dispensaries</h1>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">All Vermont Cannabis Dispensaries</h1>
         <p class="text-gray-500">{dispensaries.length} licensed dispensaries statewide</p>
       </div>
 
@@ -70,14 +70,15 @@ const schema = [
           <label class="block text-xs font-medium text-gray-500 mb-1">Features</label>
           <select id="filter-feature" class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white">
             <option value="">Any</option>
-            <option value="delivery">Delivery</option>
             <option value="onlineOrdering">Online Ordering</option>
-            <option value="veteranDiscount">Veteran Discount</option>
-            <option value="medicalProgram">Medical Program</option>
-            <option value="accessible">Accessible</option>
+            <option value="accessible">ADA Accessible</option>
+            <option value="parking">Parking</option>
+            <option value="debitAccepted">Debit Accepted</option>
+            <option value="cashOnly">Cash Only</option>
+            <option value="delivery">Delivery</option>
           </select>
         </div>
-        <button id="filter-reset" class="text-sm text-brand-primary hover:underline">Reset</button>
+        <button id="filter-reset" class="text-sm text-brand-green hover:underline">Reset</button>
       </div>
 
       <!-- Grid -->
@@ -112,7 +113,7 @@ const schema = [
         let visible = 0;
 
         grid?.querySelectorAll<HTMLElement>("[data-town]").forEach((el) => {
-          const features = JSON.parse(el.dataset.features || "{}");
+          const features = JSON.parse(el.dataset.features || "null") ?? {};
           const match =
             (!town || el.dataset.town === town) &&
             (!county || el.dataset.county === county) &&

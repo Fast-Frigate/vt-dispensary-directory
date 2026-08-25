@@ -1,0 +1,39 @@
+---
+import SEOHead from "../components/layout/SEOHead.astro";
+import Header from "../components/layout/Header.astro";
+import Footer from "../components/layout/Footer.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  heading?: string;
+  intro?: string;
+  label?: string;
+  schema?: object[];
+  noindex?: boolean;
+  wide?: boolean;
+}
+
+const { title, description, heading, intro, label, schema = [], noindex = false, wide = false } = Astro.props;
+const width = wide ? "max-w-7xl" : "max-w-3xl";
+---
+
+<html lang="en">
+  <head>
+    <SEOHead title={title} description={description} schema={schema} noindex={noindex} />
+  </head>
+  <body>
+    <Header />
+    <main class={`${width} mx-auto px-4 sm:px-6 lg:px-8 py-12`}>
+      {heading && (
+        <header class="mb-10">
+          {label && <p class="section-label">{label}</p>}
+          <h1 class="text-4xl md:text-5xl font-black tracking-tight text-brand-ink leading-tight mb-4">{heading}</h1>
+          {intro && <p class="text-lg text-brand-muted max-w-2xl">{intro}</p>}
+        </header>
+      )}
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
