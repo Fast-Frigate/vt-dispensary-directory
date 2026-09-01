@@ -52,17 +52,28 @@ them, so you can launch first and add them after.
 | Variable | Where it comes from |
 |---|---|
 | `PUBLIC_CF_BEACON_TOKEN` | Set. Cloudflare dashboard > Web Analytics > Manage site > the token in the JS snippet. Automatic injection was tried first and never added the beacon, so this site uses manual snippet installation, which keeps the tag in version control where you can see it. |
-| `PUBLIC_GA4_ID` | GA4 property > Data Streams > Measurement ID, format `G-XXXXXXXXXX` |
-| `PUBLIC_GSC_VERIFICATION` | Search Console > add property > HTML tag method, copy the `content` value |
+| `PUBLIC_GA4_ID` | Set. GA4 property **VT Dispensary Directory** (552453617) under the FastFrigates.com account, web stream 15569221284. |
+| `PUBLIC_GSC_VERIFICATION` | Not needed. The Search Console property is a **Domain** property verified by DNS TXT on the zone, which covers apex, www, http and https. The TXT record must stay in Cloudflare DNS or verification is lost. |
 
 These are build-time variables. Changing one requires a redeploy to take effect.
 
-## 5. Search Console
+## 5. Search Console and analytics
 
-Once the domain resolves, add the property in Google Search Console. If you verify
-by DNS through Cloudflare you can skip `PUBLIC_GSC_VERIFICATION` entirely.
+Both are done. For reference:
 
-Then submit the sitemap: `https://vtdispensarydirectory.com/sitemap-index.xml`
+- **Search Console**: Domain property `sc-domain:vtdispensarydirectory.com`, verified by a
+  DNS TXT record on the zone root. Sitemap `https://vtdispensarydirectory.com/sitemap-index.xml`
+  submitted. Do not delete the `google-site-verification=` TXT record; removing it drops
+  verification.
+- **GA4**: property *VT Dispensary Directory* (552453617) in the FastFrigates.com account,
+  Eastern reporting time zone, web stream for `https://vtdispensarydirectory.com`. Enhanced
+  measurement is on, which tracks outbound clicks natively alongside the site's own
+  `affiliate_click` event.
+- **Cloudflare Web Analytics**: manual JS snippet installation via `PUBLIC_CF_BEACON_TOKEN`.
+
+Google's Search Console verification flow offers a one-click option that works by granting
+Google delegated access to the Cloudflare DNS account. That was deliberately declined in
+favour of adding the TXT record manually, so Google holds no standing access to DNS.
 
 ## What is already handled
 
